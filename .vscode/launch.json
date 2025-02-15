@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Wails: Dev ldap-explorer",
+      "type": "go",
+      "request": "launch",
+      "mode": "exec",
+      "program": "${workspaceFolder}/build/bin/ldap-explorer-go.app/Contents/MacOS/ldap-explorer-go",
+      "preLaunchTask": "build debug",
+      "cwd": "${workspaceFolder}"
+    }
+  ]
+}

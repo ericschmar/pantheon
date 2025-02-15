@@ -1,0 +1,30 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build debug",
+            "type": "shell",
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "CGO_CFLAGS": "-mmacosx-version-min=10.13",
+                    "CGO_CXXFLAGS": "-I/Users/me/Dev/test/build",
+                    "CGO_ENABLED": "1",
+                    "CGO_LDFLAGS": "-framework UniformTypeIdentifiers -mmacosx-version-min=10.13",
+                    "GOOS": "darwin",
+                    "GOARCH": "amd64",
+                }
+            },
+            "command": "go",
+            "args": [
+                "build",
+                "-gcflags",
+                "all=-N -l",
+                "-tags",
+                "dev",
+                "-o",
+                "build/bin/ldap-explorer-go.app/Contents/MacOS/ldap-explorer-go"
+            ],
+        }
+    ]
+}

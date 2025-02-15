@@ -41,8 +41,7 @@ func main() {
 			Middleware: nil,
 		},
 		Menu:             nil,
-		Logger:           nil,
-		LogLevel:         logger.WARNING,
+		Logger:           logger.NewFileLogger("log"),
 		OnStartup:        app.startup,
 		OnDomReady:       app.domReady,
 		OnBeforeClose:    app.beforeClose,
@@ -75,14 +74,6 @@ func main() {
 			Appearance:           mac.NSAppearanceNameDarkAqua,
 			WebviewIsTransparent: true,
 			WindowIsTranslucent:  false,
-			About: &mac.AboutInfo{
-				Title:   "My Application",
-				Message: "© 2021 Me",
-				Icon:    icon,
-			},
-		},
-		Debug: options.Debug{
-			OpenInspectorOnStartup: true,
 		},
 	})
 

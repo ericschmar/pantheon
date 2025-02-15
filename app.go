@@ -3,11 +3,16 @@ package main
 import (
 	"context"
 	"fmt"
+	"ldap-explorer-go/services"
+	"ldap-explorer-go/tree"
+	"log/slog"
+	"os"
 )
 
 // App struct
 type App struct {
 	ctx context.Context
+	ls  *services.LdapConn
 }
 
 // NewApp creates a new App application struct
@@ -19,6 +24,13 @@ func NewApp() *App {
 func (a *App) startup(ctx context.Context) {
 	// Perform your setup here
 	a.ctx = ctx
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	slog.SetDefault(logger)
+	if ls, err := services.NewLdapConn(services.WithHost("ldap.forumsys.com"), services.WithPort("389")); err != nil {
+		slog.Info("error connecting", "error", err.Error())
+	} else {
+		a.ls = ls
+	}
 }
 
 // domReady is called after front-end resources have been loaded
@@ -41,4 +53,8 @@ func (a *App) shutdown(ctx context.Context) {
 // Greet returns a greeting for the given name
 func (a *App) Greet(name string) string {
 	return fmt.Sprintf("Hello %s, It's show time!", name)
+}
+
+func (a *App) GetEntries() *tree.Tree[map[string]any] {
+	return a.ls.GetEntries()
 }

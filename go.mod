@@ -2,13 +2,19 @@ module ldap-explorer-go
 
 go 1.24.0
 
-require github.com/wailsapp/wails/v2 v2.9.3
+require (
+	github.com/ginkgoch/godash/v2 v2.0.1
+	github.com/go-ldap/ldap/v3 v3.4.10
+	github.com/wailsapp/wails/v2 v2.9.3
+)
 
 require (
+	github.com/Azure/go-ntlmssp v0.0.0-20221128193559-754e69321358 // indirect
 	github.com/bep/debounce v1.2.1 // indirect
+	github.com/go-asn1-ber/asn1-ber v1.5.7 // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
-	github.com/google/uuid v1.3.0 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/jchv/go-winloader v0.0.0-20210711035445-715c2860da7e // indirect
 	github.com/labstack/echo/v4 v4.10.2 // indirect
 	github.com/labstack/gommon v0.4.0 // indirect

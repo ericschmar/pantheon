@@ -1,130 +1,223 @@
 <script lang="ts" module>
-// This is sample data.
-const data = {
-	changes: [
-		{
-			file: "README.md",
-			state: "M",
-		},
-		{
-			file: "routes/+page.svelte",
-			state: "U",
-		},
-		{
-			file: "routes/+layout.svelte",
-			state: "M",
-		},
-	],
-	tree: [
-		["lib", ["components", "button.svelte", "card.svelte"], "utils.ts"],
-		[
-			"routes",
-			["hello", "+page.svelte", "+page.ts"],
-			"+page.svelte",
-			"+page.server.ts",
-			"+layout.svelte",
-		],
-		["static", "favicon.ico", "svelte.svg"],
-		"eslint.config.js",
-		".gitignore",
-		"svelte.config.js",
-		"tailwind.config.js",
-		"package.json",
-		"README.md",
-	],
-};
+    // sample data
+    const data = {
+        versions: ["1.0.1", "1.1.0-alpha", "2.0.0-beta1"],
+        navMain: [
+            {
+                title: "Getting Started",
+                url: "#",
+                items: [
+                    {
+                        title: "Installation",
+                        url: "#",
+                    },
+                    {
+                        title: "Project Structure",
+                        url: "#",
+                    },
+                ],
+            },
+            {
+                title: "Building Your Application",
+                url: "#",
+                items: [
+                    {
+                        title: "Routing",
+                        url: "#",
+                    },
+                    {
+                        title: "Data Fetching",
+                        url: "#",
+                        isActive: true,
+                    },
+                    {
+                        title: "Rendering",
+                        url: "#",
+                    },
+                    {
+                        title: "Caching",
+                        url: "#",
+                    },
+                    {
+                        title: "Styling",
+                        url: "#",
+                    },
+                    {
+                        title: "Optimizing",
+                        url: "#",
+                    },
+                    {
+                        title: "Configuring",
+                        url: "#",
+                    },
+                    {
+                        title: "Testing",
+                        url: "#",
+                    },
+                    {
+                        title: "Authentication",
+                        url: "#",
+                    },
+                    {
+                        title: "Deploying",
+                        url: "#",
+                    },
+                    {
+                        title: "Upgrading",
+                        url: "#",
+                    },
+                    {
+                        title: "Examples",
+                        url: "#",
+                    },
+                ],
+            },
+            {
+                title: "API Reference",
+                url: "#",
+                items: [
+                    {
+                        title: "Components",
+                        url: "#",
+                    },
+                    {
+                        title: "File Conventions",
+                        url: "#",
+                    },
+                    {
+                        title: "Functions",
+                        url: "#",
+                    },
+                    {
+                        title: "next.config.js Options",
+                        url: "#",
+                    },
+                    {
+                        title: "CLI",
+                        url: "#",
+                    },
+                    {
+                        title: "Edge Runtime",
+                        url: "#",
+                    },
+                ],
+            },
+            {
+                title: "Architecture",
+                url: "#",
+                items: [
+                    {
+                        title: "Accessibility",
+                        url: "#",
+                    },
+                    {
+                        title: "Fast Refresh",
+                        url: "#",
+                    },
+                    {
+                        title: "Svelte Compiler",
+                        url: "#",
+                    },
+                    {
+                        title: "Supported Browsers",
+                        url: "#",
+                    },
+                    {
+                        title: "Rollup",
+                        url: "#",
+                    },
+                ],
+            },
+        ],
+    };
 </script>
 
 <script lang="ts">
-	import * as Collapsible from "$lib/components/ui/collapsible/index.js";
-	import * as Sidebar from "$lib/components/ui/sidebar/index.js";
-	import ChevronRight from "lucide-svelte/icons/chevron-right";
-	import File from "lucide-svelte/icons/file";
-	import Command from "lucide-svelte/icons/Command";
-	import AudioWaveform from "lucide-svelte/icons/audio-waveform";
-	import Folder from "lucide-svelte/icons/folder";
-	import type { ComponentProps } from "svelte";
-    import ConnectionSwitcher from "./connection-switcher.svelte";
-    import { onMount } from 'svelte';
+    import SearchForm from "$lib/components/search-form.svelte";
+    import * as Collapsible from "$lib/components/ui/collapsible/index.js";
+    import * as Sidebar from "$lib/components/ui/sidebar/index.js";
+    import GalleryVerticalEnd from "lucide-svelte/icons/gallery-vertical-end";
+    import Minus from "lucide-svelte/icons/minus";
+    import Plus from "lucide-svelte/icons/plus";
+    import type { ComponentProps } from "svelte";
 
-    onMount(async () => {
-        console.log("on mount")
-    })
-
-    const teams = [
-			{
-				name: "Acme Inc",
-				logo: Command,
-				plan: "Enterprise",
-			},
-			{
-				name: "Acme Corp.",
-				logo: AudioWaveform,
-				plan: "Startup",
-			},
-			{
-				name: "Evil Corp.",
-				logo: Command,
-				plan: "Free",
-			},
-		]
-
-	let { ref = $bindable(null), ...restProps }: ComponentProps<typeof Sidebar.Root> = $props();
+    let {
+        ref = $bindable(null),
+        ...restProps
+    }: ComponentProps<typeof Sidebar.Root> = $props();
 </script>
 
-<Sidebar.Root bind:ref {...restProps} >
+<Sidebar.Root bind:ref {...restProps}>
     <Sidebar.Header>
-        <ConnectionSwitcher teams={teams} />
-	</Sidebar.Header>
-	<Sidebar.Content>
-		<Sidebar.Group>
-			<Sidebar.GroupLabel>Files</Sidebar.GroupLabel>
-			<Sidebar.GroupContent>
-				<Sidebar.Menu>
-					{#each data.tree as item, index (index)}
-						{@render Tree({ item })}
-					{/each}
-				</Sidebar.Menu>
-			</Sidebar.GroupContent>
-		</Sidebar.Group>
-	</Sidebar.Content>
-	<Sidebar.Rail />
+        <Sidebar.Menu>
+            <Sidebar.MenuItem>
+                <Sidebar.MenuButton size="lg">
+                    {#snippet child({ props })}
+                        <a href="##" {...props}>
+                            <div
+                                class="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg"
+                            >
+                                <GalleryVerticalEnd class="size-4" />
+                            </div>
+                            <div class="flex flex-col gap-0.5 leading-none">
+                                <span class="font-semibold">Documentation</span>
+                                <span class="">v1.0.0</span>
+                            </div>
+                        </a>
+                    {/snippet}
+                </Sidebar.MenuButton>
+            </Sidebar.MenuItem>
+        </Sidebar.Menu>
+        <SearchForm />
+    </Sidebar.Header>
+    <Sidebar.Content>
+        <Sidebar.Group>
+            <Sidebar.Menu>
+                {#each data.navMain as mainItem, index (mainItem.title)}
+                    <Collapsible.Root
+                        open={index === 1}
+                        class="group/collapsible"
+                    >
+                        <Sidebar.MenuItem>
+                            <Collapsible.Trigger>
+                                {#snippet child({ props })}
+                                    <Sidebar.MenuButton {...props}>
+                                        {mainItem.title}{" "}
+                                        <Plus
+                                            class="ml-auto group-data-[state=open]/collapsible:hidden"
+                                        />
+                                        <Minus
+                                            class="ml-auto group-data-[state=closed]/collapsible:hidden"
+                                        />
+                                    </Sidebar.MenuButton>
+                                {/snippet}
+                            </Collapsible.Trigger>
+                            {#if mainItem.items?.length}
+                                <Collapsible.Content>
+                                    <Sidebar.MenuSub>
+                                        {#each mainItem.items as item (item.title)}
+                                            <Sidebar.MenuSubItem>
+                                                <Sidebar.MenuSubButton
+                                                    isActive={item.isActive}
+                                                >
+                                                    {#snippet child({ props })}
+                                                        <a
+                                                            href={item.url}
+                                                            {...props}
+                                                            >{item.title}</a
+                                                        >
+                                                    {/snippet}
+                                                </Sidebar.MenuSubButton>
+                                            </Sidebar.MenuSubItem>
+                                        {/each}
+                                    </Sidebar.MenuSub>
+                                </Collapsible.Content>
+                            {/if}
+                        </Sidebar.MenuItem>
+                    </Collapsible.Root>
+                {/each}
+            </Sidebar.Menu>
+        </Sidebar.Group>
+    </Sidebar.Content>
+    <Sidebar.Rail />
 </Sidebar.Root>
-
-<!-- eslint-disable-next-line @typescript-eslint/no-explicit-any -->
-{#snippet Tree({ item }: { item: string | any[] })}
-	{@const [name, ...items] = Array.isArray(item) ? item : [item]}
-	{#if !items.length}
-		<Sidebar.MenuButton
-			isActive={name === "button.svelte"}
-			class="data-[active=true]:bg-transparent"
-		>
-			<File />
-			{name}
-		</Sidebar.MenuButton>
-	{:else}
-		<Sidebar.MenuItem>
-			<Collapsible.Root
-				class="group/collapsible [&[data-state=open]>button>svg:first-child]:rotate-90"
-				open={name === "lib" || name === "components"}
-			>
-				<Collapsible.Trigger>
-					{#snippet child({ props })}
-						<Sidebar.MenuButton {...props}>
-							<ChevronRight className="transition-transform" />
-							<Folder />
-							{name}
-						</Sidebar.MenuButton>
-					{/snippet}
-				</Collapsible.Trigger>
-				<Collapsible.Content>
-					<Sidebar.MenuSub>
-						{#each items as subItem, index (index)}
-							{@render Tree({ item: subItem })}
-						{/each}
-					</Sidebar.MenuSub>
-				</Collapsible.Content>
-			</Collapsible.Root>
-		</Sidebar.MenuItem>
-	{/if}
-{/snippet}
