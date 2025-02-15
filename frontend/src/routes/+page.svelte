@@ -1,7 +1,7 @@
 <script lang="ts">
-    import Sidebar from "$lib/components/sidebar-page.svelte";
+    import TreeViewer from "$lib/components/tree-viewer.svelte";
 </script>
 
 <main>
-    <Sidebar />
+    <TreeViewer />
 </main>
