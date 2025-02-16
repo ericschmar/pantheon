@@ -3,7 +3,6 @@ module ldap-explorer-go
 go 1.24.0
 
 require (
-	github.com/ginkgoch/godash/v2 v2.0.1
 	github.com/go-ldap/ldap/v3 v3.4.10
 	github.com/wailsapp/wails/v2 v2.9.3
 )

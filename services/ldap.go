@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"ldap-explorer-go/tree"
 	"log"
-	"strings"
 
 	"hash/fnv"
 
-	gd "github.com/ginkgoch/godash/v2"
 	"github.com/go-ldap/ldap/v3"
 )
 
@@ -60,7 +58,7 @@ func WithPassword(password string) Option {
 	}
 }
 
-func (l *LdapConn) GetEntries() *tree.Tree[map[string]any] {
+func (l *LdapConn) GetEntries() *tree.Tree {
 	BASE_DN := "dc=example,dc=com"
 	searchRequest := ldap.NewSearchRequest(
 		BASE_DN, // The base dn to search
@@ -75,12 +73,12 @@ func (l *LdapConn) GetEntries() *tree.Tree[map[string]any] {
 		log.Fatal(err)
 	}
 
-	t := tree.New()
+	t := tree.NewTree()
 
 	//tree := map_tree.NewMapTree(BASE_DN)
 
 	for idx, entry := range sr.Entries {
-		m := make(map[string]any)
+		m := make(map[string][]string)
 		for _, attr := range entry.Attributes {
 			m[attr.Name] = attr.Values
 		}
@@ -88,12 +86,18 @@ func (l *LdapConn) GetEntries() *tree.Tree[map[string]any] {
 			//t.AddNode(strings.Split(BASE_DN, ","), m)
 			//fmt.Println(gd.Split(BASE_DN, ","))
 		} else {
-			s, _ := strings.CutSuffix(entry.DN, BASE_DN)
+			//s, _ := strings.CutSuffix(entry.DN, BASE_DN)
 			//fmt.Println(s)
-			t.AddNode(gd.Reverse(strings.Split(s, ",")), m)
+			//t.AddNode(gd.Reverse(strings.Split(s, ",")), m)
+			//tree.Insert(gd.Reverse(strings.Split(s, ",")), m)
+			t.AddEntry(&tree.LDAPEntry{
+				DN:    entry.DN,
+				Attrs: m,
+			})
 		}
 	}
 
+	//t.Print()
 	//fmt.Println(t.ToJSON())
 	return t
 }

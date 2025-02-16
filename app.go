@@ -55,6 +55,6 @@ func (a *App) Greet(name string) string {
 	return fmt.Sprintf("Hello %s, It's show time!", name)
 }
 
-func (a *App) GetEntries() *tree.Tree[map[string]any] {
+func (a *App) GetEntries() *tree.Tree {
 	return a.ls.GetEntries()
 }
