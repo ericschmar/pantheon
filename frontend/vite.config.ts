@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import { cjsInterop } from "vite-plugin-cjs-interop";
+import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 
@@ -10,6 +11,7 @@ export default defineConfig({
     cjsInterop({
       dependencies: ["@fluentui/react-components"],
     }),
+    tailwindcss(),
   ],
   build: {
     outDir: "build",

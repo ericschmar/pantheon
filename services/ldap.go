@@ -5,8 +5,6 @@ import (
 	"ldap-explorer-go/tree"
 	"log"
 
-	"hash/fnv"
-
 	"github.com/go-ldap/ldap/v3"
 )
 
@@ -73,37 +71,18 @@ func (l *LdapConn) GetEntries() *tree.Tree {
 		log.Fatal(err)
 	}
 
-	t := tree.NewTree()
+	t := tree.NewTree(BASE_DN)
 
-	//tree := map_tree.NewMapTree(BASE_DN)
-
-	for idx, entry := range sr.Entries {
+	for _, entry := range sr.Entries[1:] {
 		m := make(map[string][]string)
 		for _, attr := range entry.Attributes {
 			m[attr.Name] = attr.Values
 		}
-		if idx == 0 {
-			//t.AddNode(strings.Split(BASE_DN, ","), m)
-			//fmt.Println(gd.Split(BASE_DN, ","))
-		} else {
-			//s, _ := strings.CutSuffix(entry.DN, BASE_DN)
-			//fmt.Println(s)
-			//t.AddNode(gd.Reverse(strings.Split(s, ",")), m)
-			//tree.Insert(gd.Reverse(strings.Split(s, ",")), m)
-			t.AddEntry(&tree.LDAPEntry{
-				DN:    entry.DN,
-				Attrs: m,
-			})
-		}
+		t.AddEntry(&tree.LDAPEntry{
+			DN:    entry.DN,
+			Attrs: m,
+		})
 	}
 
-	//t.Print()
-	//fmt.Println(t.ToJSON())
 	return t
-}
-
-func hash(s string) uint {
-	h := fnv.New32a()
-	h.Write([]byte(s))
-	return uint(h.Sum32())
 }

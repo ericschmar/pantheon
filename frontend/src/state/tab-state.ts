@@ -10,10 +10,13 @@ export const state = proxy({
   deleteTab: (idx: number) => {
     state.tabs.splice(idx, 1);
     state.selectedTabId = state.tabs.length - 1;
-    console.log("set selectedTabId", state.selectedTabId);
+    state.tabs = [...state.tabs];
   },
   addTab: (tab: Tab) => {
     state.tabs.push(tab);
     state.selectedTabId = state.tabs.length - 1;
+  },
+  contains: (tabId: string) => {
+    return state.tabs.some((tab) => tab.id === tabId);
   },
 });

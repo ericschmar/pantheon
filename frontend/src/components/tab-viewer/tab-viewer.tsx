@@ -1,68 +1,53 @@
-import styles from "./styles.module.css";
-import { Tag, Text } from "@fluentui/react-components";
 import { state } from "@/state/tab-state";
-import { DismissRegular } from "@fluentui/react-icons";
 import { useValtio } from "use-valtio";
-import { tree } from "@/lib/wailsjs/go/models";
-import { useEffect } from "react";
+import { TabProps } from "@/types/tab";
+import { X } from "lucide-react";
+import { cn } from "@/components/cn";
 
 const TabViewer = () => {
   const { tabs, selectedTabId } = useValtio(state);
 
+  const Tab = ({ text, dismissable, selected, onClick, onClose }: TabProps) => {
+    return (
+      <div
+        onClick={onClick}
+        className={cn(
+          "flex flex-row gap-1 flex-nowrap items-center max-w-[8rem] cursor-pointer pl-2 pr-2 pt-1 pb-1 rounded-sm bg-white/60 border default-border-color",
+          selected
+            ? "dark:bg-offgray-800/8 shadow-[3px_3px_0_hsla(219,_93%,_42%,_0.06)] dark:shadow-[3px_3px_0_hsla(219,_90%,_60%,_0.08)]"
+            : ""
+        )}
+      >
+        <p className="tracking-tight text-nowrap text-ellipsis text-xs">
+          {text}
+        </p>
+        {dismissable && <X onClick={() => onClose()} size={13} />}
+      </div>
+    );
+  };
+
   return (
-    <div className={styles.container}>
-      <div className={styles.bar}>
+    <div
+      className={cn(
+        "flex flex-col h-full w-full",
+        tabs.length > 0 ? " gap-1" : ""
+      )}
+    >
+      <div className="flex gap-1 flex-row flex-nowrap">
         {tabs.map((tab, idx) => (
-          <Tag
-            className={styles.tab}
-            key={tab.id}
-            dismissible={selectedTabId === idx && tab.id !== "1"}
-            dismissIcon={
-              <DismissRegular
-                className={styles.dismiss}
-                onClick={() => {
-                  state.deleteTab(idx);
-                }}
-              />
-            }
-            size="small"
-            style={{
-              border: `${
-                selectedTabId === idx
-                  ? "1px solid var(--colorNeutralBackgroundStatic)"
-                  : "none"
-              }`,
-            }}
-            onClick={() => (state.selectedTabId = idx)}
-          >
-            {tab.title === "" ? (
-              <Text
-                italic
-                size={100}
-                style={{
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                empty
-              </Text>
-            ) : (
-              <Text
-                size={100}
-                style={{
-                  overflow: "hidden",
-                  whiteSpace: "nowrap",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                {tab.title}
-              </Text>
-            )}
-          </Tag>
+          <Tab
+            key={idx}
+            text={tab.title}
+            dismissable={selectedTabId === idx && tab.id !== "1"}
+            selected={idx === selectedTabId}
+            onClick={() => state.setSelectedTabId(idx)}
+            onClose={() => state.deleteTab(idx)}
+          />
         ))}
       </div>
-      <div className={styles.viewer}>{tabs[selectedTabId]?.title}</div>
+      <div className="p-4 mb-4 w-[98%] h-full border default-border-color rounded-sm p-2.5 bg-white/60 dark:bg-offgray-800/8 shadow-[6px_6px_0_hsla(219,_93%,_42%,_0.06)] dark:shadow-[5px_5px_0_hsla(219,_90%,_60%,_0.08)]">
+        {tabs[selectedTabId]?.title}
+      </div>
     </div>
   );
 };

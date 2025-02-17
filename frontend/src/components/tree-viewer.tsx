@@ -1,106 +1,115 @@
-import {
-  Caption1,
-  Tag,
-  Tree,
-  TreeItem,
-  TreeItemLayout,
-} from "@fluentui/react-components";
 import { useEffect, useState, useTransition } from "react";
 import { GetEntries } from "../lib/wailsjs/go/main/App";
 import { tree } from "@/lib/wailsjs/go/models";
-import { state } from "@/state/tab-state";
+import { cn } from "./cn";
+import { proxy } from "valtio";
+import { useValtio } from "use-valtio";
+import { SquareMinus, SquarePlus } from "lucide-react";
+import { state as tabState } from "@/state/tab-state";
+
+const state = proxy({
+  openedNodeIds: [] as string[],
+  addSelectedNodeId: (id: string) => {
+    state.openedNodeIds = [...state.openedNodeIds, id];
+  },
+  removeSelectedNodeId: (id: string) => {
+    state.openedNodeIds = state.openedNodeIds.filter((nodeId) => nodeId !== id);
+  },
+  isOpened: (id: string) => state.openedNodeIds.includes(id),
+});
 
 function TreeView() {
   const [loading, startTransition] = useTransition();
   const [entries, setEntries] = useState<tree.Tree>({} as tree.Tree);
+  const { openedNodeIds, addSelectedNodeId, removeSelectedNodeId, isOpened } =
+    useValtio(state);
 
-  const ColorMapping: { [key: string]: string } = {
-    dc: "var(--colorPaletteAnchorForeground2)",
-    dcText: "white",
-    cn: "var(--colorPalettePlatinumForeground2)",
-    cnText: "white",
-    ou: "var(--colorPalettePlatinumBorderActive)",
-    ouText: "white",
-    uid: "var(--colorPalettePlatinumBackground2)",
-    uidText: "black",
-  };
+  const { contains, addTab } = useValtio(tabState);
 
   useEffect(() => {
     startTransition(async () => {
       const t = await GetEntries();
+      console.log(t);
       setEntries(t);
     });
   }, []);
 
-  const TreeComponent = ({ root }: { root: tree.TreeNode | undefined }) => {
+  const ListComponent = ({ root }: { root: tree.TreeNode | undefined }) => {
+    const { addSelectedNodeId, removeSelectedNodeId, isOpened } =
+      useValtio(state);
+    const { contains, addTab } = useValtio(tabState);
+
     if (!root) return null;
     const children = root.children || [];
     const entry = root.entry;
     const childName = entry?.dn.split(",")[0] ?? "";
     const qualifier = childName.split("=")[0];
-    const value = childName.split("=")[1];
+    const value = root.id.split("=")[1] ?? "";
+    return (
+      <>
+        <li className="w-full flex flex-1 leading-[18px]">
+          <a
+            onClick={() => {
+              console.log(root.id, isOpened(root.id));
+              isOpened(root.id)
+                ? removeSelectedNodeId(root.id)
+                : addSelectedNodeId(root.id);
+              if (root.children && root.children.length === 0) {
+                addTab({
+                  id: root.id,
+                  title: value,
+                  data: root.entry ?? ({} as tree.LDAPEntry),
+                });
+              }
+            }}
+            className={cn(
+              contains(root.id)
+                ? "text-accent-blue bg-accent-blue/5 dark:text-blue-400 dark:bg-accent-blue/12 "
+                : "",
+              "flex flex-row place-content-between items-center ",
+              "lg:px-2.5 lg:py-1 fv-style w-full shrink-0 lg:text-left text-nowrap focus-visible:[outline-offset:-4px]! dark:border-gray-700/20 hover:bg-accent-blue/10 cursor-pointer"
+            )}
+          >
+            <div className="flex flex-row gap-2">
+              {value}
+              <kbd className="h-5 px-1.5 max-w-max rounded-xs flex items-center gap-0.5 text-[.6875rem] text-gray-500 dark:text-gray-300 border border-gray-500/20 dark:border-offgray-400/10 bg-gray-50/50 dark:bg-cream-900/10 !px-1">
+                {qualifier}
+              </kbd>
+            </div>
 
-    return children.length > 0 ? (
-      <TreeItem itemType="branch">
-        <TreeItemLayout style={{ minHeight: "8px" }}>
-          <Tag
-            size="small"
-            style={{
-              backgroundColor: ColorMapping[qualifier],
-              color: ColorMapping[qualifier + "Text"],
-            }}
-          >
-            {value}
-            <Caption1>{" [" + qualifier + "]"}</Caption1>
-          </Tag>
-        </TreeItemLayout>
-        <Tree>
-          {children.map((childNode) => (
-            <TreeComponent key={childNode.id} root={childNode} />
-          ))}
-        </Tree>
-      </TreeItem>
-    ) : (
-      <TreeItem itemType="leaf">
-        <TreeItemLayout
-          style={{ minHeight: "8px" }}
-          onClick={() => {
-            state.addTab({
-              id: value,
-              title: value,
-              data: entry ?? ({} as tree.LDAPEntry),
-            });
-          }}
-        >
-          <Tag
-            size="small"
-            style={{
-              backgroundColor: ColorMapping[qualifier],
-              color: ColorMapping[qualifier + "Text"],
-            }}
-          >
-            {value}
-            <Caption1>{" [" + qualifier + "]"}</Caption1>
-          </Tag>
-        </TreeItemLayout>
-      </TreeItem>
+            {root.children &&
+              root.children.length > 0 &&
+              (isOpened(root.id) ? (
+                <SquareMinus size={14} className="stroke-gray-500" />
+              ) : (
+                <SquarePlus size={14} className="stroke-gray-500" />
+              ))}
+          </a>
+        </li>
+        {root.children && root.children.length > 0 && isOpened(root.id) && (
+          <ul className="overflow-x-auto flex lg:flex-col text-sm pl-4">
+            {children.map((childNode) => (
+              <ListComponent key={childNode.id} root={childNode} />
+            ))}
+          </ul>
+        )}
+      </>
     );
   };
 
   return loading ? (
     <></>
   ) : (
-    <Tree
-      appearance="transparent"
-      style={{
-        width: "100%",
-        overflowY: "auto",
-        overflowX: "hidden",
-        height: "100%",
-      }}
-    >
-      <TreeComponent root={entries.Root?.children[0]} />
-    </Tree>
+    <nav className="hidden md:block relative z-1 h-[91%] border-l border-gray-300 dark:border-gray-700/20 overflow-y-auto">
+      <div className="subheader text-center lg:text-left px-0 lg:px-2.5 pb-2.5">
+        {`Root <${entries?.Root?.id}>`}
+      </div>
+      <ul className="overflow-x-auto flex lg:flex-col text-sm">
+        {entries.Root?.children.map((entry) => (
+          <ListComponent key={entry.id} root={entry} />
+        ))}
+      </ul>
+    </nav>
   );
 }
 

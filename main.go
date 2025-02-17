@@ -64,7 +64,7 @@ func main() {
 		// Mac platform specific options
 		Mac: &mac.Options{
 			TitleBar: &mac.TitleBar{
-				TitlebarAppearsTransparent: false,
+				TitlebarAppearsTransparent: true,
 				HideTitle:                  false,
 				HideTitleBar:               false,
 				FullSizeContent:            false,

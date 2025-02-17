@@ -5,3 +5,11 @@ export type Tab = {
   title: string;
   data: tree.LDAPEntry;
 };
+
+export type TabProps = {
+  text: string;
+  selected: boolean;
+  dismissable: boolean;
+  onClick: () => void;
+  onClose: () => void;
+};
