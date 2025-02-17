@@ -2,14 +2,21 @@ package main
 
 import (
 	"embed"
+	"fmt"
+	"ldap-explorer-go/enums"
+	"ldap-explorer-go/services"
 	"log"
+	"log/slog"
 	"runtime"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/logger"
+	"github.com/wailsapp/wails/v2/pkg/menu"
+	"github.com/wailsapp/wails/v2/pkg/menu/keys"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 	"github.com/wailsapp/wails/v2/pkg/options/mac"
+	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 //go:embed frontend/build
@@ -21,6 +28,30 @@ var icon []byte
 func main() {
 	// Create an instance of the app structure
 	app := NewApp()
+
+	AppMenu := menu.NewMenu()
+	if runtime.GOOS == "darwin" {
+		AppMenu.Append(menu.AppMenu()) // On macOS platform, this must be done right after `NewMenu()`
+	}
+	FileMenu := AppMenu.AddSubmenu("File")
+	FileMenu.AddText("Connect", keys.CmdOrCtrl("c"), func(_ *menu.CallbackData) {
+		if ls, err := services.NewLdapConn(services.WithHost("ldap.forumsys.com"), services.WithPort("389")); err != nil {
+			slog.Info("error connecting", "error", err.Error())
+		} else {
+			fmt.Println("connected")
+			app.ls = ls
+			rt.EventsEmit(app.ctx, enums.ConnectedEvent, "")
+		}
+	})
+	FileMenu.AddSeparator()
+	FileMenu.AddText("Quit", keys.CmdOrCtrl("q"), func(_ *menu.CallbackData) {
+		// `rt` is an alias of "github.com/wailsapp/wails/v2/pkg/runtime" to prevent collision with standard package
+		rt.Quit(app.ctx)
+	})
+
+	if runtime.GOOS == "darwin" {
+		AppMenu.Append(menu.EditMenu()) // On macOS platform, EditMenu should be appended to enable Cmd+C, Cmd+V, Cmd+Z... shortcuts
+	}
 
 	// Create application with options
 	err := wails.Run(&options.App{
@@ -40,7 +71,7 @@ func main() {
 			Handler:    nil,
 			Middleware: nil,
 		},
-		Menu:             nil,
+		Menu:             AppMenu,
 		Logger:           logger.NewFileLogger("log"),
 		OnStartup:        app.startup,
 		OnDomReady:       app.domReady,
@@ -51,6 +82,9 @@ func main() {
 		CSSDragValue:     "drag",
 		Bind: []interface{}{
 			app,
+		},
+		EnumBind: []interface{}{
+			[]enums.EventTypeBind{enums.Connected},
 		},
 		// Windows platform specific options
 		// Windows: &windows.Options{

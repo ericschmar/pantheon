@@ -26,11 +26,6 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
-	if ls, err := services.NewLdapConn(services.WithHost("ldap.forumsys.com"), services.WithPort("389")); err != nil {
-		slog.Info("error connecting", "error", err.Error())
-	} else {
-		a.ls = ls
-	}
 }
 
 // domReady is called after front-end resources have been loaded

@@ -1,22 +1,36 @@
 import { Tab } from "@/types/tab";
 import { proxy } from "valtio";
 
-export const state = proxy({
+export const tabState = proxy({
   tabs: [] as Tab[],
   selectedTabId: 0,
   setSelectedTabId: (id: number) => {
-    state.selectedTabId = id;
+    tabState.selectedTabId = id;
   },
   deleteTab: (idx: number) => {
-    state.tabs.splice(idx, 1);
-    state.selectedTabId = state.tabs.length - 1;
-    state.tabs = [...state.tabs];
+    treeState.removeSelectedNodeId(tabState.tabs[idx].id);
+    tabState.tabs.splice(idx, 1);
+    tabState.selectedTabId = tabState.tabs.length - 1;
+    tabState.tabs = [...tabState.tabs];
   },
   addTab: (tab: Tab) => {
-    state.tabs.push(tab);
-    state.selectedTabId = state.tabs.length - 1;
+    tabState.tabs.push(tab);
+    tabState.selectedTabId = tabState.tabs.length - 1;
   },
   contains: (tabId: string) => {
-    return state.tabs.some((tab) => tab.id === tabId);
+    return tabState.tabs.some((tab) => tab.id === tabId);
   },
+});
+
+export const treeState = proxy({
+  openedNodeIds: [] as string[],
+  addSelectedNodeId: (id: string) => {
+    treeState.openedNodeIds = [...treeState.openedNodeIds, id];
+  },
+  removeSelectedNodeId: (id: string) => {
+    treeState.openedNodeIds = treeState.openedNodeIds.filter(
+      (nodeId) => nodeId !== id
+    );
+  },
+  isOpened: (id: string) => treeState.openedNodeIds.includes(id),
 });

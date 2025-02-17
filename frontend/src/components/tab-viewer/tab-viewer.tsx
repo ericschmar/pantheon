@@ -1,11 +1,11 @@
-import { state } from "@/state/tab-state";
+import { tabState } from "@/state/tab-state";
 import { useValtio } from "use-valtio";
 import { TabProps } from "@/types/tab";
 import { X } from "lucide-react";
 import { cn } from "@/components/cn";
 
 const TabViewer = () => {
-  const { tabs, selectedTabId } = useValtio(state);
+  const { tabs, selectedTabId } = useValtio(tabState);
 
   const Tab = ({ text, dismissable, selected, onClick, onClose }: TabProps) => {
     return (
@@ -40,8 +40,8 @@ const TabViewer = () => {
             text={tab.title}
             dismissable={selectedTabId === idx && tab.id !== "1"}
             selected={idx === selectedTabId}
-            onClick={() => state.setSelectedTabId(idx)}
-            onClose={() => state.deleteTab(idx)}
+            onClick={() => tabState.setSelectedTabId(idx)}
+            onClose={() => tabState.deleteTab(idx)}
           />
         ))}
       </div>

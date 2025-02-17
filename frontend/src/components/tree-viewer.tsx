@@ -1,42 +1,30 @@
 import { useEffect, useState, useTransition } from "react";
 import { GetEntries } from "../lib/wailsjs/go/main/App";
-import { tree } from "@/lib/wailsjs/go/models";
+import { enums, tree } from "@/lib/wailsjs/go/models";
 import { cn } from "./cn";
-import { proxy } from "valtio";
 import { useValtio } from "use-valtio";
 import { SquareMinus, SquarePlus } from "lucide-react";
-import { state as tabState } from "@/state/tab-state";
-
-const state = proxy({
-  openedNodeIds: [] as string[],
-  addSelectedNodeId: (id: string) => {
-    state.openedNodeIds = [...state.openedNodeIds, id];
-  },
-  removeSelectedNodeId: (id: string) => {
-    state.openedNodeIds = state.openedNodeIds.filter((nodeId) => nodeId !== id);
-  },
-  isOpened: (id: string) => state.openedNodeIds.includes(id),
-});
+import { tabState, treeState } from "@/state/tab-state";
+import { EventsOn } from "@/lib/wailsjs/runtime/runtime";
 
 function TreeView() {
   const [loading, startTransition] = useTransition();
   const [entries, setEntries] = useState<tree.Tree>({} as tree.Tree);
-  const { openedNodeIds, addSelectedNodeId, removeSelectedNodeId, isOpened } =
-    useValtio(state);
-
-  const { contains, addTab } = useValtio(tabState);
 
   useEffect(() => {
-    startTransition(async () => {
-      const t = await GetEntries();
-      console.log(t);
-      setEntries(t);
+    EventsOn("connected", (data) => {
+      console.log(enums.EventType.CONNECTED, data);
+      startTransition(async () => {
+        const t = await GetEntries();
+        console.log(t);
+        setEntries(t);
+      });
     });
   }, []);
 
   const ListComponent = ({ root }: { root: tree.TreeNode | undefined }) => {
-    const { addSelectedNodeId, removeSelectedNodeId, isOpened } =
-      useValtio(state);
+    const { addSelectedNodeId, removeSelectedNodeId, openedNodeIds } =
+      useValtio(treeState);
     const { contains, addTab } = useValtio(tabState);
 
     if (!root) return null;
@@ -50,8 +38,8 @@ function TreeView() {
         <li className="w-full flex flex-1 leading-[18px]">
           <a
             onClick={() => {
-              console.log(root.id, isOpened(root.id));
-              isOpened(root.id)
+              console.log(root.id, openedNodeIds.includes(root.id));
+              openedNodeIds.includes(root.id)
                 ? removeSelectedNodeId(root.id)
                 : addSelectedNodeId(root.id);
               if (root.children && root.children.length === 0) {
@@ -72,27 +60,29 @@ function TreeView() {
           >
             <div className="flex flex-row gap-2">
               {value}
-              <kbd className="h-5 px-1.5 max-w-max rounded-xs flex items-center gap-0.5 text-[.6875rem] text-gray-500 dark:text-gray-300 border border-gray-500/20 dark:border-offgray-400/10 bg-gray-50/50 dark:bg-cream-900/10 !px-1">
+              <kbd className="h-4 px-1.5 max-w-max rounded-xs flex items-center gap-0.5 text-[.5875rem] text-gray-500 dark:text-gray-300 border border-gray-500/20 dark:border-offgray-400/10 bg-gray-50/50 dark:bg-cream-900/10 !px-1">
                 {qualifier}
               </kbd>
             </div>
 
             {root.children &&
               root.children.length > 0 &&
-              (isOpened(root.id) ? (
+              (openedNodeIds.includes(root.id) ? (
                 <SquareMinus size={14} className="stroke-gray-500" />
               ) : (
                 <SquarePlus size={14} className="stroke-gray-500" />
               ))}
           </a>
         </li>
-        {root.children && root.children.length > 0 && isOpened(root.id) && (
-          <ul className="overflow-x-auto flex lg:flex-col text-sm pl-4">
-            {children.map((childNode) => (
-              <ListComponent key={childNode.id} root={childNode} />
-            ))}
-          </ul>
-        )}
+        {root.children &&
+          root.children.length > 0 &&
+          openedNodeIds.includes(root.id) && (
+            <ul className="overflow-x-auto flex lg:flex-col text-sm pl-4">
+              {children.map((childNode) => (
+                <ListComponent key={childNode.id} root={childNode} />
+              ))}
+            </ul>
+          )}
       </>
     );
   };

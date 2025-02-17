@@ -1,8 +1,16 @@
+export namespace enums {
+	
+	export enum EventType {
+	    CONNECTED = "connected",
+	}
+
+}
+
 export namespace tree {
 	
 	export class LDAPEntry {
 	    dn: string;
-	    attrs: {[key: string]: string[]};
+	    attrs: Record<string, string[]>;
 	
 	    static createFrom(source: any = {}) {
 	        return new LDAPEntry(source);

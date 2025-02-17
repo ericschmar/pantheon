@@ -16,6 +16,7 @@
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
         "react-resizable-layout": "^0.7.2",
+        "reactish-state": "^0.11.2",
         "tailwind-merge": "^3.0.1",
         "tailwindcss": "^4.0.6",
         "use-valtio": "^0.2.0",
@@ -839,6 +840,8 @@
     "react-resizable-layout": ["react-resizable-layout@0.7.2", "", { "peerDependencies": { "react": ">=17.0.0", "react-dom": ">=17.0.0" } }, "sha512-GrVzAecB6+osdAx5PPP3G8R9n7A2uDd3NL+PyrHWNRaVBivZmW/o0+yFjQdS5Bo016A2fIP11fAhefsknWN4aw=="],
 
     "react-style-singleton": ["react-style-singleton@2.2.3", "", { "dependencies": { "get-nonce": "^1.0.0", "tslib": "^2.0.0" }, "peerDependencies": { "@types/react": "*", "react": "^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0 || ^19.0.0-rc" }, "optionalPeers": ["@types/react"] }, "sha512-b6jSvxvVnyptAiLjbkWLE/lOnR4lfTtDAl+eUC7RZy+QQWc6wRzIV2CE6xBuMmDxc2qIihtDCZD5NPOFl7fRBQ=="],
+
+    "reactish-state": ["reactish-state@0.11.2", "", { "dependencies": { "use-sync-external-store": "^1.2.0" }, "peerDependencies": { "immer": ">=6.0", "react": "^16.8 || ^17.0 || ^18.0" }, "optionalPeers": ["immer"] }, "sha512-j/cOtBCe0mQ2Hf4JJZCFPu8x1H849U8i35CsaykseJgzFguCPqt1rYxEmBQQx02gA1aY3GOqA6DpTKrUf4bJzw=="],
 
     "regenerator-runtime": ["regenerator-runtime@0.14.1", "", {}, "sha512-dYnhHh0nJoMfnkZs6GmmhFknAGRrLznOu5nc9ML+EJxGvrx6H7teuevqVqCuPcPK//3eDrrjQhehXVx9cnkGdw=="],
 
