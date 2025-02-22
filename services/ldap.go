@@ -11,11 +11,15 @@ import (
 type Option = func(*LdapConn)
 
 type LdapConn struct {
-	conn     *ldap.Conn
-	host     string
-	port     string
-	username string
-	password string
+	conn        *ldap.Conn `json:"-"`
+	Key         string     `json:"key"`
+	Host        string     `json:"host"`
+	Port        string     `json:"port"`
+	Username    string     `json:"username"`
+	Password    string     `json:"password"`
+	Name        string     `json:"name"`
+	BaseDN      string     `json:"base_dn"`
+	IsFavorited bool       `json:"is_favorited"`
 }
 
 func NewLdapConn(opts ...Option) (*LdapConn, error) {
@@ -23,43 +27,68 @@ func NewLdapConn(opts ...Option) (*LdapConn, error) {
 	for _, opt := range opts {
 		opt(l)
 	}
-	conn, err := ldap.DialURL(fmt.Sprintf("ldap://%s:%s", l.host, l.port))
-	if err != nil {
-		return nil, err
-	}
-	conn.Bind(l.username, l.password)
-	l.conn = conn
 	return l, nil
+}
+
+func (l *LdapConn) Connect() error {
+	conn, err := ldap.DialURL(fmt.Sprintf("ldap://%s:%s", l.Host, l.Port))
+	if err != nil {
+		return err
+	}
+	conn.Bind(l.Username, l.Password)
+	l.conn = conn
+	return nil
+}
+
+func (l *LdapConn) Disconnect() error {
+	return l.conn.Close()
 }
 
 func WithHost(host string) Option {
 	return func(l *LdapConn) {
-		l.host = host
+		l.Host = host
 	}
 }
 
 func WithPort(port string) Option {
 	return func(l *LdapConn) {
-		l.port = port
+		l.Port = port
 	}
 }
 
 func WithUsername(username string) Option {
 	return func(l *LdapConn) {
-		l.username = username
+		l.Username = username
 	}
 }
 
 func WithPassword(password string) Option {
 	return func(l *LdapConn) {
-		l.password = password
+		l.Password = password
+	}
+}
+
+func WithName(name string) Option {
+	return func(l *LdapConn) {
+		l.Name = name
+	}
+}
+
+func WithBaseDN(baseDN string) Option {
+	return func(l *LdapConn) {
+		l.BaseDN = baseDN
+	}
+}
+
+func WithKey(key string) Option {
+	return func(l *LdapConn) {
+		l.Key = key
 	}
 }
 
 func (l *LdapConn) GetEntries() *tree.Tree {
-	BASE_DN := "dc=example,dc=com"
 	searchRequest := ldap.NewSearchRequest(
-		BASE_DN, // The base dn to search
+		l.BaseDN, // The base dn to search
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
 		"((objectClass=*))", // The filter to apply
 		[]string{"*"},       // A list attributes to retrieve
@@ -71,7 +100,7 @@ func (l *LdapConn) GetEntries() *tree.Tree {
 		log.Fatal(err)
 	}
 
-	t := tree.NewTree(BASE_DN)
+	t := tree.NewTree(l.BaseDN)
 
 	for _, entry := range sr.Entries[1:] {
 		m := make(map[string][]string)

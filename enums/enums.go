@@ -8,10 +8,15 @@ type EventTypeBind struct {
 }
 
 const ConnectedEvent = "connected"
+const DisconnectedEvent = "disconnected"
 
 var (
 	Connected = EventTypeBind{
 		Value:  ConnectedEvent,
 		TSName: "CONNECTED",
+	}
+	Disconnected = EventTypeBind{
+		Value:  DisconnectedEvent,
+		TSName: "DISCONNECTED",
 	}
 )

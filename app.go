@@ -2,17 +2,26 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"encoding/json"
+	"ldap-explorer-go/enums"
 	"ldap-explorer-go/services"
 	"ldap-explorer-go/tree"
 	"log/slog"
 	"os"
+	"runtime"
+
+	keyring "github.com/99designs/keyring"
+	gd "github.com/ginkgoch/godash/v2"
+	shortuuid "github.com/lithammer/shortuuid/v4"
+	rt "github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 // App struct
 type App struct {
-	ctx context.Context
-	ls  *services.LdapConn
+	ctx         context.Context
+	ls          *services.LdapConn
+	kr          keyring.Keyring
+	isConnected bool
 }
 
 // NewApp creates a new App application struct
@@ -26,6 +35,18 @@ func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
+	if runtime.GOOS == "darwin" { // macos
+		if kr, err := keyring.Open(keyring.Config{
+			ServiceName:              "pantheon",
+			KeychainName:             "pantheon",
+			KeychainTrustApplication: true,
+		}); err != nil {
+			slog.Error("Failed to open keyring", "err", err)
+			return
+		} else {
+			a.kr = kr
+		}
+	}
 }
 
 // domReady is called after front-end resources have been loaded
@@ -45,11 +66,88 @@ func (a *App) shutdown(ctx context.Context) {
 	// Perform your teardown here
 }
 
-// Greet returns a greeting for the given name
-func (a *App) Greet(name string) string {
-	return fmt.Sprintf("Hello %s, It's show time!", name)
-}
-
 func (a *App) GetEntries() *tree.Tree {
 	return a.ls.GetEntries()
+}
+
+func (a *App) AddCredential(conn *services.LdapConn) error {
+	jsonBytes, err := json.Marshal(conn)
+	if err != nil {
+		return err
+	}
+	return a.kr.Set(keyring.Item{
+		Key:   shortuuid.New(),
+		Data:  jsonBytes,
+		Label: conn.Host,
+	})
+}
+
+func (a *App) DeleteCredential(key string) error {
+	return a.kr.Remove(key)
+}
+
+func (a *App) GetCredentials() []*services.LdapConn {
+	items, _ := a.kr.Keys()
+	return gd.Map(items, func(key string) *services.LdapConn {
+		item, _ := a.kr.Get(key)
+		var i services.LdapConn
+		if err := json.Unmarshal(item.Data, &i); err != nil {
+			return nil
+		}
+		ld, _ := services.NewLdapConn(services.WithHost(i.Host), services.WithPort(i.Port), services.WithName(i.Name))
+		ld.Key = key
+		return ld
+	})
+}
+
+func (a *App) Disconnect() error {
+	if a.ls != nil {
+		return a.ls.Disconnect()
+	}
+	return nil
+}
+
+func (a *App) TestConnection(conn *services.LdapConn) string {
+	if err := a.connect(conn); err != "" {
+		return err
+	}
+	a.ls.Disconnect()
+	return ""
+}
+
+func (a *App) Connect(conn *services.LdapConn) string {
+	jsonBytes, err := json.Marshal(conn)
+	if err != nil {
+		return err.Error()
+	}
+	if c, err := a.kr.Get(conn.Key); err != nil {
+		if conn.IsFavorited {
+			a.kr.Set(keyring.Item{
+				Key:   shortuuid.New(),
+				Data:  jsonBytes,
+				Label: conn.Host,
+			})
+		}
+		return a.connect(conn)
+	} else {
+		var i services.LdapConn
+		if err := json.Unmarshal(c.Data, &i); err != nil {
+			return err.Error()
+		}
+		return a.connect(&i)
+	}
+}
+
+func (a *App) connect(conn *services.LdapConn) string {
+	if ls, err := services.NewLdapConn(services.WithHost(conn.Host), services.WithPort(conn.Port), services.WithName(conn.Name), services.WithBaseDN(conn.BaseDN), services.WithKey(conn.Key)); err != nil {
+		return err.Error()
+	} else {
+		a.ls = ls
+		if err := a.ls.Connect(); err != nil {
+			return err.Error()
+		}
+		a.isConnected = true
+		rt.EventsEmit(a.ctx, enums.ConnectedEvent, "")
+		return ""
+	}
 }
