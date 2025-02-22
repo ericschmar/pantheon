@@ -1,12 +1,12 @@
 import { useEffect, useState, useTransition } from "react";
-import { GetEntries } from "../lib/wailsjs/go/main/App";
+import { Disconnect, GetEntries } from "../lib/wailsjs/go/main/App";
 import { enums, tree } from "@/lib/wailsjs/go/models";
 import { cn } from "./cn";
 import { useValtio } from "use-valtio";
-import { SquareMinus, SquarePlus } from "lucide-react";
+import { SquareMinus, SquarePlus, Unplug } from "lucide-react";
 import { tabState, treeState } from "@/state/tab-state";
 import { EventsOn } from "@/lib/wailsjs/runtime/runtime";
-import clsx from "clsx";
+import { navigate } from "wouter/use-hash-location";
 
 function TreeView() {
   const [loading, startTransition] = useTransition();
@@ -15,13 +15,10 @@ function TreeView() {
   );
 
   useEffect(() => {
-    EventsOn("connected", (data) => {
-      console.log(enums.EventType.CONNECTED, data);
-      startTransition(async () => {
-        const t = await GetEntries();
-        console.log(t);
-        setEntries(t);
-      });
+    startTransition(async () => {
+      const t = await GetEntries();
+      console.log(t);
+      setEntries(t);
     });
   }, []);
 
@@ -120,8 +117,16 @@ function TreeView() {
         </div>
       ) : (
         <>
-          <div className="subheader text-center lg:text-left px-0 lg:px-2.5 pb-2.5">
+          <div className="flex flex-row gap-4 subheader text-center lg:text-left px-0 lg:px-2.5 pb-2.5">
             {`Root <${entries?.Root?.id}>`}
+            <Unplug
+              size={13}
+              className="cursor-pointer"
+              onClick={async () => {
+                await Disconnect();
+                navigate("/connect");
+              }}
+            />
           </div>
           <ul className="overflow-x-auto flex lg:flex-col text-sm">
             {entries.Root?.children.map((entry) => (

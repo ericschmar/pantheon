@@ -35,14 +35,19 @@ func main() {
 	}
 	FileMenu := AppMenu.AddSubmenu("File")
 	FileMenu.AddText("Connect", &keys.Accelerator{Key: "R", Modifiers: []keys.Modifier{keys.CmdOrCtrlKey, keys.ShiftKey}}, func(_ *menu.CallbackData) {
-		if ls, err := services.NewLdapConn(services.WithHost("ldap.forumsys.com"), services.WithPort("389")); err != nil {
+		if ls, err := services.NewLdapConn(services.WithHost("ldap.forumsys.com"), services.WithPort("389"), services.WithBaseDN("dc=example,dc=com"), services.WithName("Forum Sys")); err != nil {
 			slog.Info("error connecting", "error", err.Error())
 		} else {
 			fmt.Println("connected")
 			app.ls = ls
+			if err := app.ls.Connect(); err != nil {
+				slog.Info("error connecting", "error", err.Error())
+				return
+			}
 			rt.EventsEmit(app.ctx, enums.ConnectedEvent, "")
 		}
 	})
+
 	FileMenu.AddSeparator()
 	FileMenu.AddText("Quit", keys.CmdOrCtrl("q"), func(_ *menu.CallbackData) {
 		rt.Quit(app.ctx)
@@ -83,7 +88,7 @@ func main() {
 			app,
 		},
 		EnumBind: []interface{}{
-			[]enums.EventTypeBind{enums.Connected},
+			[]enums.EventTypeBind{enums.Connected, enums.Disconnected},
 		},
 		// Windows platform specific options
 		// Windows: &windows.Options{

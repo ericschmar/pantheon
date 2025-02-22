@@ -2,6 +2,38 @@ export namespace enums {
 	
 	export enum EventType {
 	    CONNECTED = "connected",
+	    DISCONNECTED = "disconnected",
+	}
+
+}
+
+export namespace services {
+	
+	export class LdapConn {
+	    key: string;
+	    host: string;
+	    port: string;
+	    username: string;
+	    password: string;
+	    name: string;
+	    base_dn: string;
+	    is_favorited: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new LdapConn(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.key = source["key"];
+	        this.host = source["host"];
+	        this.port = source["port"];
+	        this.username = source["username"];
+	        this.password = source["password"];
+	        this.name = source["name"];
+	        this.base_dn = source["base_dn"];
+	        this.is_favorited = source["is_favorited"];
+	    }
 	}
 
 }
