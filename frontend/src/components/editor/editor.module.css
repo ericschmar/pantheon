@@ -1,0 +1,30 @@
+.editor {
+    font-family: Zed Mono;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    counter-reset: line;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    height: 50%;
+    width: 98%;
+    overflow-y: auto;
+}
+
+.editor #codeArea {
+  outline: none;
+  padding-left: 40px !important;
+  overflow-y: auto;
+}
+
+.editor pre {
+  padding-left: 40px !important;
+}
+
+.editor .editorLineNumber {
+  position: absolute;
+  left: 0px;
+  color: #cccccc;
+  text-align: right;
+  width: 20px;
+  font-weight: 100;
+}

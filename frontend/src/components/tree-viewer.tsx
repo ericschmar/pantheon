@@ -6,10 +6,13 @@ import { useValtio } from "use-valtio";
 import { SquareMinus, SquarePlus } from "lucide-react";
 import { tabState, treeState } from "@/state/tab-state";
 import { EventsOn } from "@/lib/wailsjs/runtime/runtime";
+import clsx from "clsx";
 
 function TreeView() {
   const [loading, startTransition] = useTransition();
-  const [entries, setEntries] = useState<tree.Tree>({} as tree.Tree);
+  const [entries, setEntries] = useState<tree.Tree>(
+    null as unknown as tree.Tree
+  );
 
   useEffect(() => {
     EventsOn("connected", (data) => {
@@ -90,15 +93,43 @@ function TreeView() {
   return loading ? (
     <></>
   ) : (
-    <nav className="hidden md:block relative z-1 h-[91%] border-l border-gray-300 dark:border-gray-700/20 overflow-y-auto">
-      <div className="subheader text-center lg:text-left px-0 lg:px-2.5 pb-2.5">
-        {`Root <${entries?.Root?.id}>`}
-      </div>
-      <ul className="overflow-x-auto flex lg:flex-col text-sm">
-        {entries.Root?.children.map((entry) => (
-          <ListComponent key={entry.id} root={entry} />
-        ))}
-      </ul>
+    <nav
+      className={cn(
+        entries === null
+          ? ""
+          : "border-l border-gray-300 dark:border-gray-700/20",
+        "hidden md:block relative z-1 h-[91%]  overflow-y-auto"
+      )}
+    >
+      {entries === null ? (
+        <div className="flex flex-col items-center justify-center h-full">
+          <div className="text-sm text-gray-500 dark:text-gray-300">
+            No Connection
+          </div>
+          <div className="text-sm text-gray-500 dark:text-gray-300">
+            <div className="flex flex-row gap-2">
+              <kbd className="h-5 px-1.5 max-w-max rounded-xs flex items-center gap-0.5 text-[.6875rem] font-bold text-gray-500 dark:text-gray-300 border border-gray-500/20 dark:border-offgray-400/10 bg-gray-50/50 dark:bg-cream-900/10 !px-1">
+                Ctrl/Cmd + Shift + R
+              </kbd>
+              to refresh.
+            </div>
+          </div>
+          <div className="text-sm text-gray-500 dark:text-gray-300">
+            {"Or File > Connect"}
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="subheader text-center lg:text-left px-0 lg:px-2.5 pb-2.5">
+            {`Root <${entries?.Root?.id}>`}
+          </div>
+          <ul className="overflow-x-auto flex lg:flex-col text-sm">
+            {entries.Root?.children.map((entry) => (
+              <ListComponent key={entry.id} root={entry} />
+            ))}
+          </ul>
+        </>
+      )}
     </nav>
   );
 }

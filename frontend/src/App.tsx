@@ -1,9 +1,37 @@
-import { Textarea } from "@fluentui/react-components";
 import TreeView from "./components/tree-viewer";
 import TabViewer from "./components/tab-viewer/tab-viewer";
-import { ArrowUp, Command, Search } from "lucide-react";
+import {
+  ArrowUp,
+  Command,
+  CornerDownLeft,
+  Search,
+  SearchIcon,
+} from "lucide-react";
+import CustomEditor from "./components/editor/editor";
+import Button from "./components/button";
+import { useEffect, useState } from "react";
+import { Lexer, ParseError } from "./ast/lexer";
+import { Parser } from "./ast/parser";
+import { formatQuery } from "./ast/formatter";
 
 function App() {
+  const [code, setCode] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    if (code === "") {
+      setError("");
+      return;
+    }
+    try {
+      const lexer = new Lexer(code);
+      const parser = new Parser(lexer);
+      const ast = parser.parse();
+      setError("");
+    } catch (e) {
+      console.error(e.message);
+      setError(e.message);
+    }
+  }, [code]);
   return (
     <>
       <div className="relative flex min-h-screen w-screen flex-col flex-none justify-between overflow-hidden">
@@ -39,13 +67,31 @@ function App() {
                 <TreeView />
               </div>
             </div>
-            <div className="flex flex-col col-span-11 pt-[0.6rem] pl-[0.3rem] pr-[0.3rem] h-[97vh] overflow-hidden">
+            <div className="flex flex-col col-span-11 pt-[0.6rem] pl-[0.3rem] pr-[0.3rem] h-full overflow-hidden">
               <TabViewer />
-              <div className="w-full h-[33%] overflow-hidden">
-                <Textarea
-                  className="w-full h-full"
-                  placeholder="Enter custom LDAP Search"
-                />
+              <div className="w-full h-full overflow-hidden">
+                <CustomEditor code={code} setCode={setCode} />
+                <div className="flex flex-row align-middle">
+                  {error && <p className="text-xs text-red-500">{error}</p>}
+                  <Button onClick={() => null} className="ml-auto mr-4">
+                    <SearchIcon
+                      size={10}
+                      className="stroke-white dark:stroke-gray-300"
+                    />
+                    Search
+                    <kbd className="h-5 px-1.5 max-w-max rounded-xs flex items-center gap-0.5 text-[.6875rem] font-bold text-gray-500 dark:text-gray-300 border border-gray-500/20 dark:border-offgray-400/10 bg-gray-50/50 dark:bg-cream-900/10 hidden sm:flex bg-white/10! border-white/20! text-white!">
+                      <Command
+                        size={10}
+                        className="stroke-white dark:stroke-gray-300"
+                      />
+                      <CornerDownLeft
+                        size={10}
+                        className="stroke-white dark:stroke-gray-300"
+                      />
+                      P
+                    </kbd>
+                  </Button>
+                </div>
               </div>
             </div>
           </div>

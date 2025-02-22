@@ -23,10 +23,12 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
+      "@/*": ["./src/*"],
       "@/components/*": ["./src/components/*"],
       "@/lib/*": ["./src/lib/*"],
       "@/types/*": ["./src/types/*"],
-      "@/state/*": ["./src/state/*"]
+      "@/state/*": ["./src/state/*"],
+      "@/hooks/*": ["./src/hooks/*"]
     }
   },
   "include": ["src"]

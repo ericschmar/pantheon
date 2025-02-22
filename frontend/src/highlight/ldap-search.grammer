@@ -1,0 +1,98 @@
+@precedence {
+  attribute @left
+  structure @left
+  valueOp @left
+  sub
+  call
+}
+
+@skip { whitespace | Comment | LineComment }
+
+// Use a custom root rule name instead of "Filter" to avoid conflicts
+@top RootFilter
+
+// Define the root filter rule, wrapping a ParenthesizedFilter
+RootFilter {
+  ParenthesizedFilter
+}
+
+// ParenthesizedFilter contains filter content inside parentheses
+ParenthesizedFilter {
+  "(" FilterContent ")"
+}
+
+// FilterContent can be an AND filter, OR filter, NOT filter, or a comparison item
+FilterContent {
+  AndFilter |
+  OrFilter |
+  NotFilter |
+  Item
+}
+
+// & indicates an AND filter, followed by one or more sub-filters
+AndFilter {
+  "&" FilterList
+}
+
+// | indicates an OR filter, followed by one or more sub-filters
+OrFilter {
+  "|" FilterList
+}
+
+// ! indicates a NOT filter, followed by exactly one sub-filter
+NotFilter {
+  "!" RootFilter
+}
+
+// A sequence of sub-filters (at least one), used by AND/OR constructs
+FilterList {
+  RootFilter+
+}
+
+// An Item is a single comparison or presence check (attribute, substring, etc.)
+Item {
+  Presence |
+  Equality |
+  Substring
+}
+
+// Presence check, for example (cn=*)
+Presence {
+  Attribute "=" "*"
+}
+
+// Equality check, for example (cn=someValue)
+Equality {
+  Attribute "=" Value
+}
+
+// Substring matching, for example (cn=Jo*hn)
+Substring {
+  Attribute "=" (SubValue "*")* SubValue?
+}
+
+// SubValue allows partial strings in a substring filter
+SubValue {
+  Value
+}
+
+// Attribute names may contain alphanumeric and certain punctuation, e.g., cn, sn, etc.
+Attribute {
+  [a-zA-Z0-9._-]+
+}
+
+// Value can contain non-parenthesis characters for simplicity
+Value {
+  [^)(*]+
+}
+
+// Tokens for whitespace, comments, etc.
+@tokens {
+  whitespace { [ \t\r\n]+ }
+
+  // Basic comment block support, if needed
+  Comment[isolate] { "/*" (!"*/" .)* "*/" }
+
+  // LineComment support, if needed
+  LineComment[isolate] { "//" [^\n]* }
+}

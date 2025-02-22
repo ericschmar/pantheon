@@ -34,7 +34,7 @@ func main() {
 		AppMenu.Append(menu.AppMenu()) // On macOS platform, this must be done right after `NewMenu()`
 	}
 	FileMenu := AppMenu.AddSubmenu("File")
-	FileMenu.AddText("Connect", keys.CmdOrCtrl("c"), func(_ *menu.CallbackData) {
+	FileMenu.AddText("Connect", &keys.Accelerator{Key: "R", Modifiers: []keys.Modifier{keys.CmdOrCtrlKey, keys.ShiftKey}}, func(_ *menu.CallbackData) {
 		if ls, err := services.NewLdapConn(services.WithHost("ldap.forumsys.com"), services.WithPort("389")); err != nil {
 			slog.Info("error connecting", "error", err.Error())
 		} else {
@@ -45,7 +45,6 @@ func main() {
 	})
 	FileMenu.AddSeparator()
 	FileMenu.AddText("Quit", keys.CmdOrCtrl("q"), func(_ *menu.CallbackData) {
-		// `rt` is an alias of "github.com/wailsapp/wails/v2/pkg/runtime" to prevent collision with standard package
 		rt.Quit(app.ctx)
 	})
 
