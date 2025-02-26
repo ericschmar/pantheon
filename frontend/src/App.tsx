@@ -1,5 +1,5 @@
 import { ArrowUp, Command, Search } from "lucide-react";
-import { Link, Route, Router, Switch } from "wouter";
+import { Route, Router, Switch } from "wouter";
 import { navigate, useHashLocation } from "wouter/use-hash-location";
 import SearchPage from "@/pages/search";
 import { useEffect } from "react";
