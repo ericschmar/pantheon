@@ -26,6 +26,10 @@ export function GetEntries() {
   return window['go']['main']['App']['GetEntries']();
 }
 
+export function Search(arg1) {
+  return window['go']['main']['App']['Search'](arg1);
+}
+
 export function TestConnection(arg1) {
   return window['go']['main']['App']['TestConnection'](arg1);
 }

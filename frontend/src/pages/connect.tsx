@@ -89,7 +89,7 @@ function ConnectPage() {
 
   const snapshot = useSnapshot(state);
   return (
-    <div className="flex flex-col justify-center h-full min-w-[70%] mx-auto">
+    <div className="flex flex-col justify-center h-full min-w-[70%] mx-auto my-auto">
       <div className="w-full relative grid grid-cols-16 gap-3">
         <div className="col-span-8 border-r border-gray-200 pr-2">
           <h2 className="text-left font-lora text-pretty h2 text-accent-blue dark:text-blue-300 font-medium text-lg pl-2 pb-2">

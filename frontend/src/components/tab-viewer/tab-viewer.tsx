@@ -3,9 +3,21 @@ import { useValtio } from "use-valtio";
 import { TabProps } from "@/types/tab";
 import { X } from "lucide-react";
 import { cn } from "@/components/cn";
+import Attribute from "../attribute";
+import _ from "lodash";
+import { useEffect, useState } from "react";
 
 const TabViewer = () => {
-  const { tabs, selectedTabId } = useValtio(tabState);
+  const { tabs, selectedTabId, selectedTab } = useValtio(tabState);
+
+  const [currentAttrs, setCurrentAttrs] = useState<{
+    [key: string]: string[];
+  } | null>(null);
+
+  useEffect(() => {
+    const attrs = selectedTab?.data?.attrs as { [key: string]: string[] };
+    setCurrentAttrs(attrs);
+  }, [selectedTab]);
 
   const Tab = ({ text, dismissable, selected, onClick, onClose }: TabProps) => {
     return (
@@ -28,10 +40,7 @@ const TabViewer = () => {
 
   return (
     <div
-      className={cn(
-        "flex flex-col h-full w-full",
-        tabs.length > 0 ? " gap-1" : ""
-      )}
+      className={cn("flex flex-col h-full", tabs.length > 0 ? " gap-1" : "")}
     >
       <div className="flex gap-1 flex-row flex-nowrap">
         {tabs.map((tab, idx) => (
@@ -45,8 +54,35 @@ const TabViewer = () => {
           />
         ))}
       </div>
-      <div className="p-4 mb-4 w-[98%] h-full border default-border-color rounded-sm p-2.5 bg-white/60 dark:bg-offgray-800/8 shadow-[6px_6px_0_hsla(219,_93%,_42%,_0.06)] dark:shadow-[5px_5px_0_hsla(219,_90%,_60%,_0.08)]">
-        {tabs[selectedTabId]?.title}
+
+      <div
+        className={cn(
+          "w-[98%] border default-border-color rounded-sm bg-white/60 dark:bg-offgray-800/8 shadow-[6px_6px_0_hsla(219,_93%,_42%,_0.06)] dark:shadow-[5px_5px_0_hsla(219,_90%,_60%,_0.08)]",
+          "flex flex-col",
+          tabs.length > 0 ? "h-[92%]" : "h-full"
+        )}
+      >
+        <div className="relative flex w-full h-full flex-col flex-none justify-between">
+          <div className="mt-5 flex w-full items-center justify-center">
+            {/* padding on header */}
+            <hr className="w-full max-w-full border-t  grid-border-color"></hr>
+          </div>
+          <div className="mx-auto w-[322px] grow border-r border-l grid-border-color overflow-y-auto overflow-x-hidden">
+            {_.map(_.keys(currentAttrs), (key: string) => (
+              <Attribute
+                key={key}
+                name={key}
+                value={
+                  tabs[selectedTabId]?.data?.attrs[key] as string | string[]
+                }
+              />
+            ))}
+          </div>
+          <div className="mb-5 flex w-full items-center justify-center">
+            <hr className="w-full max-w-full border-t grid-border-color"></hr>
+            {/* padding on footer */}
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,9 +1,12 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"ldap-explorer-go/tree"
 	"log"
+	"log/slog"
+	"time"
 
 	"github.com/go-ldap/ldap/v3"
 )
@@ -12,6 +15,8 @@ type Option = func(*LdapConn)
 
 type LdapConn struct {
 	conn        *ldap.Conn `json:"-"`
+	isConnected bool       `json:"-"`
+	closeChan   chan bool  `json:"-"`
 	Key         string     `json:"key"`
 	Host        string     `json:"host"`
 	Port        string     `json:"port"`
@@ -23,7 +28,7 @@ type LdapConn struct {
 }
 
 func NewLdapConn(opts ...Option) (*LdapConn, error) {
-	l := &LdapConn{}
+	l := &LdapConn{closeChan: make(chan bool)}
 	for _, opt := range opts {
 		opt(l)
 	}
@@ -31,16 +36,43 @@ func NewLdapConn(opts ...Option) (*LdapConn, error) {
 }
 
 func (l *LdapConn) Connect() error {
+	if l.isConnected {
+		return errors.New("already connected")
+	}
 	conn, err := ldap.DialURL(fmt.Sprintf("ldap://%s:%s", l.Host, l.Port))
 	if err != nil {
 		return err
 	}
 	conn.Bind(l.Username, l.Password)
 	l.conn = conn
+	l.isConnected = true
+	go l.backgroundConnectionPoll()
 	return nil
 }
 
+func (l *LdapConn) backgroundConnectionPoll() {
+	slog.Info("starting background connection poll")
+	for {
+		time.Sleep(500 * time.Millisecond)
+		select {
+		case <-l.closeChan:
+			slog.Info("returning from backgroundConnectionPoll")
+			return
+		default:
+			if l.conn.IsClosing() {
+				slog.Info("connection is closing")
+				err := l.Connect()
+				if err != nil {
+					slog.Error("Failed to reconnect to LDAP server: ", "err", err)
+				}
+				return
+			}
+		}
+	}
+}
+
 func (l *LdapConn) Disconnect() error {
+	l.closeChan <- true
 	return l.conn.Close()
 }
 
@@ -84,6 +116,36 @@ func WithKey(key string) Option {
 	return func(l *LdapConn) {
 		l.Key = key
 	}
+}
+
+func (l *LdapConn) Search(search string) (*tree.Tree, error) {
+	searchRequest := ldap.NewSearchRequest(
+		l.BaseDN, // The base dn to search
+		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
+		search,        // The filter to apply
+		[]string{"*"}, // A list attributes to retrieve
+		nil,
+	)
+
+	sr, err := l.conn.Search(searchRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	t := tree.NewTree(l.BaseDN)
+
+	for _, entry := range sr.Entries[1:] {
+		m := make(map[string][]string)
+		for _, attr := range entry.Attributes {
+			m[attr.Name] = attr.Values
+		}
+		t.AddEntry(&tree.LDAPEntry{
+			DN:    entry.DN,
+			Attrs: m,
+		})
+	}
+
+	return t, nil
 }
 
 func (l *LdapConn) GetEntries() *tree.Tree {
