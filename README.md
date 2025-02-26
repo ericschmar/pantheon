@@ -1,4 +1,4 @@
-## Pantheon
+## 🏛 Pantheon
 
 Introducing 🏛 Pantheon! A simple, cross-platform LDAP viewer. 
 
