@@ -17,12 +17,12 @@ jobs:
           - name: 'Pantheon'
             platform:  'linux/amd64'
             os: 'ubuntu-latest'
-            artifact_name: 'pantheon'
+            artifact_name: 'Pantheon'
             asset_name: 'pantheon-linux-amd64'
           - name: 'Pantheon'
             platform:  'windows/amd64'
             os: 'windows-latest'
-            artifact_name: 'pantheon'
+            artifact_name: 'Pantheon'
             asset_name: 'pantheon-windows-amd64'
 #          - name: 'Pantheon'
 #            platform:  'darwin/universal'
@@ -30,7 +30,7 @@ jobs:
           - name: 'Pantheon'
             platform:  'darwin/arm64'
             os: 'macos-latest'
-            artifact_name: 'pantheon'
+            artifact_name: 'Pantheon.app.zip'
             asset_name: 'pantheon-macos-amd64'
 
     runs-on: ${{ matrix.build.os }}
