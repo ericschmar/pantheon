@@ -1,6 +1,6 @@
 ## 🏛 Pantheon
 
-Introducing 🏛 Pantheon! A simple, cross-platform LDAP viewer. 
+Introducing 🏛 Pantheon! A simple, beautiful, cross-platform LDAP viewer. 
 
 ### Motivation
 
