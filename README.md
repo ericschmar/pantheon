@@ -15,7 +15,7 @@ Mac users: I do not have any of the MacOS security stuff set up yet, so MacOS th
 
 ### Technology Used
 
-Wails, ReactJS, and Go. I took heavy inspiration from (zed.dev)[https://zed.dev/] for the UI, colors, and typeface.
+Wails, ReactJS, and Go. I took heavy inspiration from [zed.dev](https://zed.dev/) for the UI, colors, and typeface.
 
 ## Reporting Bugs
 
