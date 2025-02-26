@@ -1,37 +1,19 @@
-# README
+## Pantheon
 
-## About
+Introducing 🏛 Pantheon! A simple, cross-platform LDAP viewer. 
 
-This is the Wails SvelteKit template.
-This template uses [adapter-static(SPA)](https://github.com/sveltejs/kit/tree/master/packages/adapter-static#spa-mode) to make generated files embeddable.
+### Motivation
 
-## Getting Started
+There are no good GUIs to interact with an LDAP out there. They are all decades old and likely only work on Windows. If you want a non-terminal based solution, you are really SOL. 
 
-### Installing pnpm
+### Installing Pantheon
 
-https://pnpm.io/installation
+For now, download and install the latest `.dmg`. I plan to eventually support and build installers for Windows & Linux.
 
-### Installing Wails
+### Technology Used
 
-```sh
-go install github.com/wailsapp/wails/v2/cmd/wails@latest
-```
+Wails, ReactJS, and Go. I took heavy inspiration from (zed.dev)[https://zed.dev/] for the UI, colors, and typeface.
 
-### Creating a Project
+## Reporting Bugs
 
-```sh
-wails init -n YOUR_PROJECT_NAME -t https://github.com/h8gi/wails-sveltekit-template
-```
-
-`wailsjs` modules is located in `/frontend/src/lib` so that you can call them like `$lib/wailsjs/go/main/App` in svelte files.
-
-
-## Live Development
-
-To run in live development mode, run `wails dev` in the project directory. In another terminal, go into the `frontend`
-directory and run `npm run dev`. The frontend dev server will run on http://localhost:34115. Connect to this in your
-browser and connect to your application.
-
-## Building
-
-To build a redistributable, production mode package, use `wails build`.
+Please report any bugs you encounter. Be as specific as possible and include any relavent screenshots. 
