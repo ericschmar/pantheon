@@ -28,16 +28,15 @@ jobs:
 
     runs-on: ${{ matrix.build.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: dAppServer/wails-build-action@main
-      - uses: oven-sh/setup-bun@v2
-      
       - name: Checkout
+        uses: actions/checkout@v4
         with:
           submodules: recursive
 
       - name: Build wails
         id: build
+      - uses: dAppServer/wails-build-action@main
+      - uses: oven-sh/setup-bun@v2
         with:
           build-name: ${{ matrix.build.name }}
           build-platform: ${{ matrix.build.platform }}
