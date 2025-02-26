@@ -33,13 +33,15 @@ func NewApp() *App {
 func (a *App) startup(ctx context.Context) {
 	// Perform your setup here
 	a.ctx = ctx
-	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
+	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{AddSource: true}))
 	slog.SetDefault(logger)
 	if runtime.GOOS == "darwin" { // macos
 		if kr, err := keyring.Open(keyring.Config{
-			ServiceName:              "pantheon",
-			KeychainName:             "pantheon",
+			ServiceName:              "Pantheon",
+			KeychainName:             "Pantheon",
 			KeychainTrustApplication: true,
+			KeychainSynchronizable:   true,
+			KeychainPasswordFunc:     func(string) (string, error) { return "", nil },
 		}); err != nil {
 			slog.Error("Failed to open keyring", "err", err)
 			return
@@ -64,6 +66,10 @@ func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 // shutdown is called at application termination
 func (a *App) shutdown(ctx context.Context) {
 	// Perform your teardown here
+}
+
+func (a *App) Search(search string) (*tree.Tree, error) {
+	return a.ls.Search(search)
 }
 
 func (a *App) GetEntries() *tree.Tree {

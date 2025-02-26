@@ -1,24 +1,23 @@
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import { Disconnect, GetEntries } from "../lib/wailsjs/go/main/App";
-import { enums, tree } from "@/lib/wailsjs/go/models";
+import { tree } from "@/lib/wailsjs/go/models";
 import { cn } from "./cn";
 import { useValtio } from "use-valtio";
 import { SquareMinus, SquarePlus, Unplug } from "lucide-react";
 import { tabState, treeState } from "@/state/tab-state";
-import { EventsOn } from "@/lib/wailsjs/runtime/runtime";
 import { navigate } from "wouter/use-hash-location";
 
 function TreeView() {
   const [loading, startTransition] = useTransition();
-  const [entries, setEntries] = useState<tree.Tree>(
-    null as unknown as tree.Tree
-  );
+  const { entries } = useValtio(treeState);
 
   useEffect(() => {
     startTransition(async () => {
       const t = await GetEntries();
       console.log(t);
-      setEntries(t);
+      //const temp = t.Root?.children;
+      //t.Root.children = [...temp, ...temp];
+      treeState.entries = t;
     });
   }, []);
 
@@ -38,7 +37,6 @@ function TreeView() {
         <li className="w-full flex flex-1 leading-[18px]">
           <a
             onClick={() => {
-              console.log(root.id, openedNodeIds.includes(root.id));
               openedNodeIds.includes(root.id)
                 ? removeSelectedNodeId(root.id)
                 : addSelectedNodeId(root.id);
@@ -47,6 +45,7 @@ function TreeView() {
                   id: root.id,
                   title: value,
                   data: root.entry ?? ({} as tree.LDAPEntry),
+                  selected: true,
                 });
               }
             }}
@@ -95,17 +94,17 @@ function TreeView() {
         entries === null
           ? ""
           : "border-l border-gray-300 dark:border-gray-700/20",
-        "hidden md:block relative z-1 h-[91%]  overflow-y-auto"
+        "hidden md:block relative z-1 overflow-y-auto h-full"
       )}
     >
       {entries === null ? (
-        <div className="flex flex-col items-center justify-center h-full">
+        <div className="flex flex-col items-center justify-center overflow-y-auto">
           <div className="text-sm text-gray-500 dark:text-gray-300">
             No Connection
           </div>
           <div className="text-sm text-gray-500 dark:text-gray-300">
             <div className="flex flex-row gap-2">
-              <kbd className="h-5 px-1.5 max-w-max rounded-xs flex items-center gap-0.5 text-[.6875rem] font-bold text-gray-500 dark:text-gray-300 border border-gray-500/20 dark:border-offgray-400/10 bg-gray-50/50 dark:bg-cream-900/10 !px-1">
+              <kbd className="h-5 max-w-max rounded-xs flex items-center gap-0.5 text-[.6875rem] font-bold text-gray-500 dark:text-gray-300 border border-gray-500/20 dark:border-offgray-400/10 bg-gray-50/50 dark:bg-cream-900/10 !px-1">
                 Ctrl/Cmd + Shift + R
               </kbd>
               to refresh.
@@ -128,7 +127,7 @@ function TreeView() {
               }}
             />
           </div>
-          <ul className="overflow-x-auto flex lg:flex-col text-sm">
+          <ul className="overflow-auto flex lg:flex-col text-sm">
             {entries.Root?.children.map((entry) => (
               <ListComponent key={entry.id} root={entry} />
             ))}

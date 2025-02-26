@@ -24,33 +24,6 @@
     src: local('Lora'), url(./assets/lora-variable.ttf) format('truetype');
 }
 
-@theme {
-    --color-cream-50:#f5f4ef;
-    --color-cream-100:#e8e6d9;
-    --color-cream-200:#d9d5bf;
-    --color-cream-300:#cfcaaf;
-    --color-cream-400:#bab38c;
-    --color-cream-500:#aba273;
-    --color-cream-600:#998f5c;
-    --color-cream-700:#80774d;
-    --color-cream-800:#665f3d;
-    --color-cream-900:#4c472e;
-    --color-offgray-50:#f1f2f4;
-    --color-offgray-100:#dddfe4;
-    --color-offgray-200:#c6cad2;
-    --color-offgray-300:#b8bdc7;
-    --color-offgray-400:#98a0ae;
-    --color-offgray-500:#818b9c;
-    --color-offgray-600:#6c7689;
-    --color-offgray-700:#5a6372;
-    --color-offgray-800:#4c5461;
-    --color-offgray-900:#363b45;
-    --color-offgray-950:#22252b;
-    --color-offgray-1000:#0b0c0e;
-    --color-neutral:#f6f4ef;
-    --color-accent-blue:#0751cf;
-    --default-border-color: border-color: color-mix(in oklab,var(--color-offgray-200)60%,transparent);
-}
 
 @layer base {
     body {
@@ -64,6 +37,10 @@
 @layer utility {
     .font-lora {
         font-family: "Lora";
+    }
+    .font-zed-mono {
+        font-family: "Zed Mono";
+        letter-spacing: 0.05em;
     }
     .flex-1 {
         flex-grow: 1;
@@ -117,4 +94,33 @@
        color: var(--color-offgray-600);
        text-transform: uppercase;
    }
+}
+
+
+@theme {
+    --color-cream-50:#f5f4ef;
+    --color-cream-100:#e8e6d9;
+    --color-cream-200:#d9d5bf;
+    --color-cream-300:#cfcaaf;
+    --color-cream-400:#bab38c;
+    --color-cream-500:#aba273;
+    --color-cream-600:#998f5c;
+    --color-cream-700:#80774d;
+    --color-cream-800:#665f3d;
+    --color-cream-900:#4c472e;
+    --color-offgray-50:#f1f2f4;
+    --color-offgray-100:#dddfe4;
+    --color-offgray-200:#c6cad2;
+    --color-offgray-300:#b8bdc7;
+    --color-offgray-400:#98a0ae;
+    --color-offgray-500:#818b9c;
+    --color-offgray-600:#6c7689;
+    --color-offgray-700:#5a6372;
+    --color-offgray-800:#4c5461;
+    --color-offgray-900:#363b45;
+    --color-offgray-950:#22252b;
+    --color-offgray-1000:#0b0c0e;
+    --color-neutral:#f6f4ef;
+    --color-accent-blue:#0751cf;
+    --default-border-color: border-color: color-mix(in oklab,var(--color-offgray-200)60%,transparent);
 }

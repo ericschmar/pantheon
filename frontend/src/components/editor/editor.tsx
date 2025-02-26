@@ -6,9 +6,11 @@ import { tags as t } from "@lezer/highlight";
 const CustomEditor = ({
   code,
   setCode,
+  percentageHeight,
 }: {
   code: string;
   setCode: React.Dispatch<React.SetStateAction<string>>;
+  percentageHeight: number;
 }) => {
   const { height } = useWindowDimensions();
   const lightTheme = createTheme({
@@ -45,13 +47,9 @@ const CustomEditor = ({
       value={code}
       onChange={setCode}
       theme="light"
-      height={`${height * 0.32}px`}
+      height={`${height * percentageHeight}px`}
       basicSetup
-      style={{
-        width: "98%",
-        paddingBottom: "1rem",
-        borderRadius: "8px",
-      }}
+      className="w-[98%] pb-4 rounded-ld"
     />
   );
 };

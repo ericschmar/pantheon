@@ -12,7 +12,7 @@ function App() {
 
   return (
     <>
-      <div className="relative flex min-h-screen w-screen flex-col flex-none  overflow-hidden">
+      <div className="relative flex h-screen w-screen flex-col flex-none overflow-hidden">
         <header className="sticky top-0 z-20 h-[44px] nav-background w-full max-w-full flex items-center border-b grid-border-color">
           <div className="w-full relative mx-5 flex border-l grid-border-color items-center place-content-between">
             <h2 className="font-lora text-pretty h2 text-accent-blue dark:text-blue-300 font-medium text-lg text-center pl-2">
@@ -35,10 +35,10 @@ function App() {
                 P
               </kbd>
             </button>
-            <div className="absolute h-2 w-2 z-10 rounded-[1px] rotate-45 border border-blue-200 dark:border-blue-300/25 bg-white dark:bg-black left-[-4.5px] bottom-[-9.5px]"></div>
+            <div className="absolute h-2 w-2 z-10 rounded-[1px] rotate-45 border border-blue-200 dark:border-blue-300/25 bg-white dark:bg-black left-[-4.5px] bottom-[-4.5px]"></div>
           </div>
         </header>
-        <div className="flex flex-row gap-3 w-full h-full my-auto overflow-hidden">
+        <div className="flex flex-row gap-3 w-full h-screen my-auto">
           <Router hook={useHashLocation}>
             <Switch>
               <Route path="/connect" component={ConnectPage} />

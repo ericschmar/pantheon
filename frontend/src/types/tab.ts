@@ -4,6 +4,7 @@ export type Tab = {
   id: string;
   title: string;
   data: tree.LDAPEntry;
+  selected: boolean;
 };
 
 export type TabProps = {
