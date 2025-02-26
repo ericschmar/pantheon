@@ -54,5 +54,5 @@ jobs:
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           asset_name: ${{ matrix.asset_name }}
-          file: ./build/bin/*
+          file: ./build/bin/${{ matrix.artifact_name }}
           tag: ${{ github.ref }}
