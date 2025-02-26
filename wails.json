@@ -1,6 +1,6 @@
 {
-  "name": "pantheon",
-  "outputfilename": "pantheon",
+  "name": "Pantheon",
+  "outputfilename": "Pantheon",
   "frontend:install": "bun install",
   "frontend:build": "bun run build",
   "frontend:dev:watcher": "bun run dev",

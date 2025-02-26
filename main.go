@@ -2,11 +2,8 @@ package main
 
 import (
 	"embed"
-	"fmt"
 	"ldap-explorer-go/enums"
-	"ldap-explorer-go/services"
 	"log"
-	"log/slog"
 	"runtime"
 
 	"github.com/wailsapp/wails/v2"
@@ -34,21 +31,7 @@ func main() {
 		AppMenu.Append(menu.AppMenu()) // On macOS platform, this must be done right after `NewMenu()`
 	}
 	FileMenu := AppMenu.AddSubmenu("File")
-	FileMenu.AddText("Connect", &keys.Accelerator{Key: "R", Modifiers: []keys.Modifier{keys.CmdOrCtrlKey, keys.ShiftKey}}, func(_ *menu.CallbackData) {
-		if ls, err := services.NewLdapConn(services.WithHost("ldap.forumsys.com"), services.WithPort("389"), services.WithBaseDN("dc=example,dc=com"), services.WithName("Forum Sys")); err != nil {
-			slog.Info("error connecting", "error", err.Error())
-		} else {
-			fmt.Println("connected")
-			app.ls = ls
-			if err := app.ls.Connect(); err != nil {
-				slog.Info("error connecting", "error", err.Error())
-				return
-			}
-			rt.EventsEmit(app.ctx, enums.ConnectedEvent, "")
-		}
-	})
 
-	FileMenu.AddSeparator()
 	FileMenu.AddText("Quit", keys.CmdOrCtrl("q"), func(_ *menu.CallbackData) {
 		rt.Quit(app.ctx)
 	})
@@ -59,7 +42,7 @@ func main() {
 
 	// Create application with options
 	err := wails.Run(&options.App{
-		Title:             "ldap-explorer-go",
+		Title:             "Pantheon",
 		Width:             1024,
 		Height:            768,
 		MinWidth:          400,
@@ -101,6 +84,10 @@ func main() {
 		// },
 		// Mac platform specific options
 		Mac: &mac.Options{
+			About: &mac.AboutInfo{
+				Title: "Pantheon",
+				Icon:  icon,
+			},
 			TitleBar: &mac.TitleBar{
 				TitlebarAppearsTransparent: true,
 				HideTitle:                  false,
