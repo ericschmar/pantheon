@@ -9,7 +9,9 @@ There are no good GUIs to interact with an LDAP out there. They are all decades 
 
 ### Installing Pantheon
 
-For now, download and install the latest `.dmg`. I plan to eventually support and build installers for Windows & Linux.
+Head over to the Release page and download the correct build for your system. 
+
+Mac users: I do not have any of the MacOS security stuff set up yet, so MacOS thinks this is a virus. In order to run it, simply run `xattr -c <path/to/application.app>` in your terminal.
 
 ### Technology Used
 
