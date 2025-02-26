@@ -1,4 +1,4 @@
-## 🏛 Pantheon
+## 🏛 Pantheon [![Build Pantheon](https://github.com/ericschmar/pantheon/actions/workflows/main.yml/badge.svg?branch=main&event=release)](https://github.com/ericschmar/pantheon/actions/workflows/main.yml)
 
 Introducing 🏛 Pantheon! A simple, beautiful, cross-platform LDAP viewer. 
 
