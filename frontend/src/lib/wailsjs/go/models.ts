@@ -18,6 +18,7 @@ export namespace services {
 	    name: string;
 	    base_dn: string;
 	    is_favorited: boolean;
+	    use_tls: boolean;
 	
 	    static createFrom(source: any = {}) {
 	        return new LdapConn(source);
@@ -33,6 +34,7 @@ export namespace services {
 	        this.name = source["name"];
 	        this.base_dn = source["base_dn"];
 	        this.is_favorited = source["is_favorited"];
+	        this.use_tls = source["use_tls"];
 	    }
 	}
 

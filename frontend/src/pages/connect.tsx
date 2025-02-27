@@ -1,79 +1,82 @@
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from 'react';
 import {
   GetCredentials,
   Connect,
   DeleteCredential,
   TestConnection,
-} from "../lib/wailsjs/go/main/App";
-import { services } from "@/lib/wailsjs/go/models";
-import Button from "@/components/button";
+} from '../lib/wailsjs/go/main/App';
+import { services } from '@/lib/wailsjs/go/models';
+import Button from '@/components/button';
 import {
   CheckCircle,
-  CircleCheck,
+  Lock,
   Command,
   LoaderCircle,
   TestTube,
   Trash,
   Unplug,
   XCircle,
-} from "lucide-react";
-import TextInput from "@/components/input";
-import ToggleButton from "@/components/toggle-button";
-import { proxy, useSnapshot } from "valtio";
-import { navigate } from "wouter/use-hash-location";
-import { useHotkeys } from "react-hotkeys-hook";
+  Shield,
+  ShieldOff,
+} from 'lucide-react';
+import TextInput from '@/components/input';
+import ToggleButton from '@/components/toggle-botton/toggle-button';
+import { proxy, useSnapshot } from 'valtio';
+import { navigate } from 'wouter/use-hash-location';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 const state = proxy({
-  name: "Testing",
-  host: "ldap.forumsys.com",
-  username: "",
-  password: "",
-  base_dn: "dc=example,dc=com",
-  port: "389",
-  key: "", // empty for new connections
+  name: 'Testing',
+  host: 'ldap.forumsys.com',
+  username: '',
+  password: '',
+  base_dn: 'dc=example,dc=com',
+  port: '389',
+  key: '', // empty for new connections
   is_favorited: true,
+  use_tls: false,
 });
 
 function ConnectPage() {
   const [loading, startTransition] = useTransition();
   const [isConnectionValid, setIsConnectionValid] = useState<boolean | null>(
-    null
+    null,
   );
   const [credentials, setCredentials] = useState<services.LdapConn[]>([]);
   useHotkeys(
-    ["ctrl+enter", "meta+enter"],
+    ['ctrl+enter', 'meta+enter'],
     () => {
       connect();
     },
-    []
+    [],
   );
 
   useEffect(() => {
     startTransition(async () => {
       const creds = await GetCredentials();
-      console.log("creds", creds);
+      console.log('creds', creds);
       setCredentials(creds);
     });
   }, []);
 
   function connect() {
-    console.log("connect");
+    console.log('connect');
     startTransition(async () => {
       console.log(state);
       const result = await Connect(state);
-      console.log("result", result);
-      navigate("/search");
+      console.log('result', result);
+      navigate('/search');
     });
   }
 
   function delete_connection(key: string) {
-    console.log("delete");
+    console.log('delete');
     startTransition(async () => {
       const result = await DeleteCredential(key);
-      console.log("result", result);
+      console.log('result', result);
 
       const creds = await GetCredentials();
-      console.log("creds", creds);
+      console.log('creds', creds);
       setCredentials(creds);
     });
   }
@@ -81,8 +84,8 @@ function ConnectPage() {
   function test_connection() {
     startTransition(async () => {
       const result = await TestConnection(state);
-      console.log("result", result);
-      if (result === "") setIsConnectionValid(true);
+      console.log('result', result);
+      if (result === '') setIsConnectionValid(true);
       else setIsConnectionValid(false);
     });
   }
@@ -109,11 +112,11 @@ function ConnectPage() {
               <div className="mb-4 w-[98%] h-full border flex flex-row place-content-between items-center default-border-color rounded-sm p-2.5 bg-white/60 dark:bg-offgray-800/8 shadow-[6px_6px_0_hsla(219,_93%,_42%,_0.06)] dark:shadow-[5px_5px_0_hsla(219,_90%,_60%,_0.08)]">
                 <div className="flex flex-col gap-2">
                   <p className="font-bold text-sm tracking-wide">
-                    {cred.name == "" ? "<unnamed>" : cred.name}
+                    {cred.name == '' ? '<unnamed>' : cred.name}
                   </p>
                   <div className="flex flex-row">
                     <p className="text-sm tracking-wider">
-                      {cred.host + ":" + cred.port}
+                      {cred.host + ':' + cred.port}
                     </p>
                   </div>
                 </div>
@@ -163,18 +166,31 @@ function ConnectPage() {
                 placeholder="username"
                 value={snapshot.username}
               />
-              <TextInput label="password" isPassword />
+              <TextInput
+                label="password"
+                isPassword
+                value={snapshot.password}
+              />
               <TextInput
                 label="base dn"
                 placeholder="dc=example,dc=com"
                 value={snapshot.base_dn}
               />
               <div className="flex flex-row gap-4 items-center">
-                <div className="flex min-w-24">
-                  <ToggleButton>
-                    <CircleCheck size={18} />
-                    Use TLS
+                <div className="flex min-w-24 gap-2 items-center">
+                  <ToggleButton
+                    onClick={() => {
+                      state.use_tls = !state.use_tls;
+                    }}
+                    active={state.use_tls}
+                  >
+                    {snapshot.use_tls ? (
+                      <Shield size={18} />
+                    ) : (
+                      <ShieldOff size={18} />
+                    )}
                   </ToggleButton>
+                  <p className="text-xs">use TLS</p>
                 </div>
                 <TextInput
                   label="port"
@@ -182,12 +198,14 @@ function ConnectPage() {
                   value={snapshot.port}
                 />
               </div>
-              <div className="flex flex-row gap-3 place-content-end pt-6">
+              <div className="flex flex-row gap-3 place-content-end pt-6 ">
                 <ToggleButton
-                  onClick={() => (state.is_favorited = !state.is_favorited)}
+                  onClick={() => {
+                    state.is_favorited = !state.is_favorited;
+                  }}
                   active={state.is_favorited}
                 >
-                  ⭐
+                  <p className="text-xs">⭐</p>
                 </ToggleButton>
                 <Button variant="light" onClick={() => test_connection()}>
                   {isConnectionValid === null ? (

@@ -1,0 +1,70 @@
+.button-outer {
+  background-color: color-mix(
+    in oklab,
+    var(--color-accent-blue) 90%,
+    transparent
+  );
+  border: 1px solid #000;
+  border-radius: 2.25rem;
+  justify-content: center;
+  align-items: center;
+  padding-left: .0625rem;
+  padding-right: .0625rem;
+  display: flex;
+  cursor: pointer;
+}
+
+.button-outer:hover {
+  transition: all 0.15s ease;
+}
+
+.button-inner {
+  grid-column-gap: .75rem;
+  grid-row-gap: .75rem;
+  background-color: var(--white);
+  color: var(--black);
+  border-radius: 2.25rem;
+  flex-flow: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  padding: .75rem .75rem .75rem 1.25rem;
+  display: flex;
+  position: relative;
+  background-color: rgb(255, 255, 255);
+}
+
+.is-icon {
+  padding: .25rem;
+}
+
+.button-icons-wrapper {
+  grid-column-gap: .5rem;
+  grid-row-gap: .5rem;
+  display: flex;
+}
+
+.button-icon-wrapper {
+  transition: background-color .2s, opacity .2s;
+  position: relative;
+  background-color: #d5ccfc4d;
+  border: 1px solid #000;
+  border-radius: 100vw;
+  padding: 0.25rem;
+}
+
+.button-icon-wrapper:hover {
+  background-color: color-mix(
+    in oklab,
+    var(--color-accent-blue) 30%,
+    transparent
+  );
+}
+
+[data-active="true"] {
+  background-color: color-mix(
+    in oklab,
+    var(--color-accent-blue) 30%,
+    transparent
+  );
+}
