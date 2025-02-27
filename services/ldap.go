@@ -25,6 +25,7 @@ type LdapConn struct {
 	Name        string     `json:"name"`
 	BaseDN      string     `json:"base_dn"`
 	IsFavorited bool       `json:"is_favorited"`
+	UseTls      bool       `json:"use_tls"`
 }
 
 func NewLdapConn(opts ...Option) (*LdapConn, error) {
@@ -39,7 +40,13 @@ func (l *LdapConn) Connect() error {
 	if l.isConnected {
 		return errors.New("already connected")
 	}
-	conn, err := ldap.DialURL(fmt.Sprintf("ldap://%s:%s", l.Host, l.Port))
+
+	protocol := "ldap"
+	if l.UseTls {
+		protocol = "ldaps"
+	}
+
+	conn, err := ldap.DialURL(fmt.Sprintf("%s://%s:%s", protocol, l.Host, l.Port))
 	if err != nil {
 		return err
 	}

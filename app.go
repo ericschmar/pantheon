@@ -65,6 +65,9 @@ func (a *App) beforeClose(ctx context.Context) (prevent bool) {
 
 // shutdown is called at application termination
 func (a *App) shutdown(ctx context.Context) {
+	if err := a.ls.Disconnect(); err != nil {
+		slog.Error("Failed to disconnect from LDAP server", "err", err)
+	}
 	// Perform your teardown here
 }
 
