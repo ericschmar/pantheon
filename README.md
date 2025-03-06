@@ -14,7 +14,9 @@ Introducing 🏛 Pantheon! A simple, beautiful, cross-platform LDAP viewer.
 
 Head over to the Release page and download the correct build for your system. 
 
-Mac users: I do not have any of the MacOS security stuff set up yet, so MacOS thinks this is a virus. In order to run it, simply run `xattr -c <path/to/application.app>` in your terminal.
+Mac users: I do not have any of the MacOS security stuff set up yet, so MacOS thinks this is a virus. In order to run it, simply run 
+```xattr -c <path/to/application.app>``` 
+in your terminal.
 
 ### Technology Used
 
