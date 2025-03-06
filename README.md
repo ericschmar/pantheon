@@ -8,7 +8,7 @@ Introducing 🏛 Pantheon! A simple, beautiful, cross-platform LDAP viewer.
 - 🔑 Securely save connection info using your Keychain
 - 👀 Easily navigate and view your LDAP data
 - ✅ LDAP Query validation and formatting
-- 🌱 Small paackage size < 20 MB
+- 🌱 Small package size < 20 MB
 
 ### Installing Pantheon
 
