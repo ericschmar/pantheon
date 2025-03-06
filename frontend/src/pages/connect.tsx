@@ -9,7 +9,6 @@ import { services } from '@/lib/wailsjs/go/models';
 import Button from '@/components/button';
 import {
   CheckCircle,
-  Lock,
   Command,
   LoaderCircle,
   TestTube,
