@@ -3,9 +3,12 @@
 
 Introducing 🏛 Pantheon! A simple, beautiful, cross-platform LDAP viewer. 
 
-### Motivation
+### Features
 
-There are no good GUIs to interact with an LDAP out there. They are all decades old and likely only work on Windows. If you want a non-terminal based solution, you are really SOL. 
+- 🔑 Securely save connection info using your Keychain
+- 👀 Easily navigate and view your LDAP data
+- ✅ LDAP Query validation and formatting
+- 🌱 Small paackage size < 20 MB
 
 ### Installing Pantheon
 
@@ -15,7 +18,17 @@ Mac users: I do not have any of the MacOS security stuff set up yet, so MacOS th
 
 ### Technology Used
 
-Wails, ReactJS, and Go. I took heavy inspiration from [zed.dev](https://zed.dev/) for the UI, colors, and typeface.
+- [Wails](https://wails.io/)
+- ReactJS
+- TailwindCSS
+- Go
+- UI/UX Inspiration from [zed.dev](https://zed.dev/)
+
+## Screenshots
+
+![launch](screenshots/launch.png)
+
+![main](screenshots/main.png)
 
 ## Reporting Bugs
 
