@@ -159,21 +159,25 @@ function ConnectPage() {
                 label="host"
                 placeholder="ldap.place.com"
                 value={snapshot.host}
+                onChange={(e) => (state.host = e.target.value)}
               />
               <TextInput
                 label="username"
                 placeholder="username"
                 value={snapshot.username}
+                onChange={(e) => (state.username = e.target.value)}
               />
               <TextInput
                 label="password"
                 isPassword
                 value={snapshot.password}
+                onChange={(e) => (state.password = e.target.value)}
               />
               <TextInput
                 label="base dn"
                 placeholder="dc=example,dc=com"
                 value={snapshot.base_dn}
+                onChange={(e) => (state.base_dn = e.target.value)}
               />
               <div className="flex flex-row gap-4 items-center">
                 <div className="flex min-w-24 gap-2 items-center">
