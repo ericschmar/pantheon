@@ -152,9 +152,11 @@ function ConnectPage() {
               </h2>
               <TextInput
                 label="connection name"
-                placeholder="My Connection"
                 value={snapshot.name}
-                onChange={(e) => (state.name = e.target.value)}
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  state.name = e.target.value;
+                }}
               />
               <TextInput
                 label="host"
