@@ -154,6 +154,7 @@ function ConnectPage() {
                 label="connection name"
                 placeholder="My Connection"
                 value={snapshot.name}
+                onChange={(e) => (state.name = e.target.value)}
               />
               <TextInput
                 label="host"
