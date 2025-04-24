@@ -25,12 +25,12 @@ import { navigate } from 'wouter/use-hash-location';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 const state = proxy({
-  name: 'Testing',
-  host: 'ldap.forumsys.com',
+  name: '',
+  host: '',
   username: '',
   password: '',
-  base_dn: 'dc=example,dc=com',
-  port: '389',
+  base_dn: '',
+  port: '',
   key: '', // empty for new connections
   is_favorited: true,
   use_tls: false,
@@ -200,6 +200,7 @@ function ConnectPage() {
                   label="port"
                   placeholder="389"
                   value={snapshot.port}
+                  onChange={(e) => (state.port = e.target.value)}
                 />
               </div>
               <div className="flex flex-row gap-3 place-content-end pt-6 ">
