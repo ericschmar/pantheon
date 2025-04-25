@@ -17,4 +17,6 @@ export function GetEntries():Promise<tree.Tree>;
 
 export function Search(arg1:string):Promise<tree.Tree>;
 
+export function SearchOneLayer(arg1:string):Promise<tree.Tree>;
+
 export function TestConnection(arg1:services.LdapConn):Promise<string>;

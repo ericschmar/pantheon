@@ -7,7 +7,6 @@ import (
 	"ldap-explorer-go/services"
 	"ldap-explorer-go/tree"
 	"log/slog"
-	"os"
 	"runtime"
 
 	keyring "github.com/99designs/keyring"
@@ -33,14 +32,14 @@ func NewApp() *App {
 func (a *App) startup(ctx context.Context) {
 	// Perform your setup here
 	a.ctx = ctx
-	logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{AddSource: true}))
-	slog.SetDefault(logger)
+	//logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{AddSource: true}))
+	//slog.SetDefault(logger)
 	if runtime.GOOS == "darwin" { // macos
 		if kr, err := keyring.Open(keyring.Config{
 			ServiceName:              "Pantheon",
 			KeychainName:             "Pantheon",
 			KeychainTrustApplication: true,
-			KeychainSynchronizable:   true,
+			KeychainSynchronizable:   false,
 			KeychainPasswordFunc:     func(string) (string, error) { return "", nil },
 		}); err != nil {
 			slog.Error("Failed to open keyring", "err", err)
@@ -73,6 +72,10 @@ func (a *App) shutdown(ctx context.Context) {
 
 func (a *App) Search(search string) (*tree.Tree, error) {
 	return a.ls.Search(search)
+}
+
+func (a *App) SearchOneLayer(search string) (*tree.Tree, error) {
+	return a.ls.SearchOneLayer(search)
 }
 
 func (a *App) GetEntries() *tree.Tree {
@@ -148,11 +151,19 @@ func (a *App) Connect(conn *services.LdapConn) string {
 }
 
 func (a *App) connect(conn *services.LdapConn) string {
-	if ls, err := services.NewLdapConn(services.WithHost(conn.Host), services.WithPort(conn.Port), services.WithName(conn.Name), services.WithBaseDN(conn.BaseDN), services.WithKey(conn.Key)); err != nil {
+	if ls, err := services.NewLdapConn(services.WithHost(conn.Host),
+		services.WithUsername(conn.Username),
+		services.WithPassword(conn.Password),
+		services.WithPort(conn.Port),
+		services.WithName(conn.Name),
+		services.WithBaseDN(conn.BaseDN),
+		services.WithUseTls(conn.UseTls),
+		services.WithKey(conn.Key)); err != nil {
 		return err.Error()
 	} else {
 		a.ls = ls
 		if err := a.ls.Connect(); err != nil {
+		slog.Error("error", "err", err)
 			return err.Error()
 		}
 		a.isConnected = true

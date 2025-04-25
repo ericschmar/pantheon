@@ -1242,9 +1242,7 @@
 	// LSP Specific settings.
 	"lsp": {
 		"biome": {
-			"settings": {
-				"require_config_file": true
-			}
+
 		}
 		// Specify the LSP name as a key here.
 		// "rust-analyzer": {

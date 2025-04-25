@@ -79,7 +79,7 @@ const SearchPage = () => {
                 className="ml-auto mr-4"
               >
                 {loading ? (
-                  <LoaderCircle size={10} className="animate-spin" />
+                  <LoaderCircle size={10} className="animate-spin" color="white"/>
                 ) : (
                   <SearchIcon
                     size={10}
