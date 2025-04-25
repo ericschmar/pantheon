@@ -19,7 +19,7 @@ function TreeView() {
   useEffect(() => {
     startTransition(async () => {
       const t = await GetEntries();
-      console.log(t);
+      //console.log(t);
       //const temp = t.Root?.children;
       //t.Root.children = [...temp, ...temp];
       treeState.entries = t;
@@ -45,7 +45,7 @@ function TreeView() {
     const childName = entry?.dn.split(',')[0] ?? '';
     const qualifier = childName.split('=')[0];
     const value = root.id.split('=')[1] ?? '';
-    console.log(entry, childName, qualifier, value);
+    //console.log(entry, childName, qualifier, value);
     return (
       <>
         <li className="w-full flex flex-1 leading-[18px]">

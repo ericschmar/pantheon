@@ -17,66 +17,50 @@
  * )
  */
 
-export function formatQuery(query: string): string {
-  let formatted = "";
-  let indentLevel = 0;
-  const indentSize = 4; // Number of spaces for each indentation level
+import { LDAPNode } from './parser';
 
-  function writeNewLineAndIndent() {
-    formatted += "\n" + " ".repeat(indentLevel * indentSize);
-  }
-
-  for (let i = 0; i < query.length; i++) {
-    const char = query[i];
-
-    switch (char) {
-      case "(":
-        // Write the '(' on a new line at the current indent
-        writeNewLineAndIndent();
-        formatted += "(";
-        // Increase indent after '('
-        indentLevel++;
-        break;
-
-      case ")":
-        // Decrease indent before writing ')', so the close paren lines up
-        indentLevel--;
-        writeNewLineAndIndent();
-        formatted += ")";
-        break;
-
-      case "&":
-      case "|":
-      case "!":
-        // Put operators on a new line (same indent as the current level)
-        writeNewLineAndIndent();
-        formatted += char;
-        break;
-
-      default:
-        // For regular characters (like attribute names, etc.), just append
-        formatted += char;
-        break;
-    }
-  }
-
-  // Trim leading/trailing empty lines/spaces
-  return formatted.trim();
+export function print(ldapNode: LDAPNode): string {
+  return recursivePrint(ldapNode, 0);
 }
 
-/* ---------------------------------------------------------------------------
-   Example usage (uncomment to test):
+function freshLine(indent: number) {
+  return '\n' + ' '.repeat(indent);
+}
 
-   const input = "(&(cn=John Doe)(|(sn=Doe)(givenName=John)))";
-   const formatted = formatLdapQuery(input);
-   console.log(formatted);
+function recursivePrint(ldapNode: LDAPNode, indent: number): string {
+  let ret = '';
+  if (ldapNode.type === 'Condition') {
+    ret += `(${ldapNode.attribute}=${ldapNode.value})`;
+    return ret;
+  }
+  ret += '(';
+  indent += 4;
+  ret += freshLine(indent);
+  switch (ldapNode.type) {
+    case 'Conjunction':
+      ret += '&';
+      ret += freshLine(indent);
+      ldapNode.children.forEach((child, idx) => {
+        ret += recursivePrint(child, indent);
+        if (idx < ldapNode.children.length - 1) ret += freshLine(indent);
+      });
+      break;
+    case 'Disjunction':
+      ret += '|';
+      ret += freshLine(indent);
+      ldapNode.children.forEach((child, idx) => {
+        ret += recursivePrint(child, indent);
+        if (idx < ldapNode.children.length - 1) ret += freshLine(indent);
+      });
+      break;
+    case 'Negation':
+      ret += '!';
+      ret += recursivePrint(ldapNode.child, indent);
+      break;
+  }
+  indent -= 4;
+  ret += freshLine(indent);
+  ret += ')';
 
-   // Expected output:
-   // (
-   //     & (cn=John Doe)
-   //         (
-   //             | (sn=Doe)
-   //                 (givenName=John)
-   //         )
-   // )
-*/
+  return ret;
+}
