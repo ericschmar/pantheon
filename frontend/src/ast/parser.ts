@@ -13,20 +13,20 @@
   - The error message will include line and column to help locate the issue.
 */
 
-import { Lexer } from "./lexer";
+import { Lexer } from './lexer';
 
 /**
  * Types of tokens the lexer can emit.
  */
 export enum TokenType {
-  LParen = "LParen", // (
-  RParen = "RParen", // )
-  Ampersand = "Ampersand", // &
-  Pipe = "Pipe", // |
-  Exclamation = "Exclamation", // !
-  Equality = "Equality", // =
-  Identifier = "Identifier", // attribute or value (including potential spaces)
-  EOF = "EOF",
+  LParen = 'LParen', // (
+  RParen = 'RParen', // )
+  Ampersand = 'Ampersand', // &
+  Pipe = 'Pipe', // |
+  Exclamation = 'Exclamation', // !
+  Equality = 'Equality', // =
+  Identifier = 'Identifier', // attribute or value (including potential spaces)
+  EOF = 'EOF',
 }
 
 /**
@@ -48,22 +48,22 @@ export type LDAPNode =
   | ConditionNode;
 
 export interface ConjunctionNode {
-  type: "Conjunction";
+  type: 'Conjunction';
   children: LDAPNode[];
 }
 
 export interface DisjunctionNode {
-  type: "Disjunction";
+  type: 'Disjunction';
   children: LDAPNode[];
 }
 
 export interface NegationNode {
-  type: "Negation";
+  type: 'Negation';
   child: LDAPNode;
 }
 
 export interface ConditionNode {
-  type: "Condition";
+  type: 'Condition';
   attribute: string;
   value: string;
 }
@@ -76,11 +76,11 @@ export class ParseError extends Error {
     public messageText: string,
     public position: number,
     public line: number,
-    public column: number
+    public column: number,
   ) {
     // Incorporate line and column info into the error message.
     super(`${messageText} (line ${line}, column ${column})`);
-    this.name = "ParseError";
+    this.name = 'ParseError';
   }
 }
 
@@ -101,8 +101,8 @@ export class Parser {
     // Ensure there's no extra input.
     if (this.currentToken.type !== TokenType.EOF) {
       this.throwError(
-        "Extra input after valid query",
-        this.currentToken.position
+        'Extra input after valid query',
+        this.currentToken.position,
       );
     }
     return node;
@@ -161,9 +161,9 @@ export class Parser {
     this.eat(TokenType.RParen);
 
     if (opToken.type === TokenType.Ampersand) {
-      return { type: "Conjunction", children };
+      return { type: 'Conjunction', children };
     } else {
-      return { type: "Disjunction", children };
+      return { type: 'Disjunction', children };
     }
   }
 
@@ -175,7 +175,7 @@ export class Parser {
     const child = this.parseExpression();
     this.eat(TokenType.RParen);
 
-    return { type: "Negation", child };
+    return { type: 'Negation', child };
   }
 
   private parseCondition(): LDAPNode {
@@ -189,7 +189,7 @@ export class Parser {
     this.eat(TokenType.Identifier);
 
     return {
-      type: "Condition",
+      type: 'Condition',
       attribute: attributeToken.text,
       value: valueToken.text,
     };
@@ -204,7 +204,7 @@ export class Parser {
     } else {
       this.throwError(
         `Expected token ${type} but found ${this.currentToken.type}`,
-        this.currentToken.position
+        this.currentToken.position,
       );
     }
   }

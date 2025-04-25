@@ -128,6 +128,7 @@ func (a *App) TestConnection(conn *services.LdapConn) string {
 }
 
 func (a *App) Connect(conn *services.LdapConn) string {
+    slog.Info("connecting to ldap server", "conn", conn)
 	jsonBytes, err := json.Marshal(conn)
 	if err != nil {
 		return err.Error()
@@ -151,6 +152,7 @@ func (a *App) Connect(conn *services.LdapConn) string {
 }
 
 func (a *App) connect(conn *services.LdapConn) string {
+    slog.Info("connecting to ldap server", "conn", conn)
 	if ls, err := services.NewLdapConn(services.WithHost(conn.Host),
 		services.WithUsername(conn.Username),
 		services.WithPassword(conn.Password),

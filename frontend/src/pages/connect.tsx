@@ -25,12 +25,12 @@ import { navigate } from 'wouter/use-hash-location';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 const state = proxy({
-  name: 'aes dev',
-  host: 'aes-dev.oneid.energy.gov',
-  username: 'cn=chimera,ou=applications,ou=accounts,ou=oneId,dc=doe,dc=gov',
-  password: 'chimerapass',
-  base_dn: 'ou=chimera,dc=doe,dc=gov',
-  port: '636',
+  name: 'Testing',
+  host: 'ldap.forumsys.com',
+  username: 'cn=read-only-admin,dc=example,dc=com',
+  password: 'password',
+  base_dn: 'dc=example,dc=com',
+  port: '389',
   key: '', // empty for new connections
   is_favorited: true,
   use_tls: true,
@@ -61,9 +61,7 @@ function ConnectPage() {
   function connect() {
     console.log('connect');
     startTransition(async () => {
-      console.log(state);
       const result = await Connect(state);
-      console.log('result', result);
       navigate('/search');
     });
   }
@@ -82,7 +80,7 @@ function ConnectPage() {
 
   function test_connection() {
     startTransition(async () => {
-        console.log(state)
+      console.log(state);
       const result = await TestConnection(state);
       console.log('result', result);
       if (result === '') setIsConnectionValid(true);
