@@ -23,7 +23,7 @@
                 "-tags",
                 "dev",
                 "-o",
-                "build/bin/ldap-explorer-go.app/Contents/MacOS/ldap-explorer-go"
+                "build/bin/Pantheon.app/Contents/MacOS/Pantheon"
             ],
         }
     ]

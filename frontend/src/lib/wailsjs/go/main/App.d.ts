@@ -15,8 +15,8 @@ export function GetCredentials():Promise<Array<services.LdapConn>>;
 
 export function GetEntries():Promise<tree.Tree>;
 
-export function Search(arg1:string):Promise<tree.Tree>;
+export function Search(arg1:string):Promise<services.SearchResult>;
 
-export function SearchOneLayer(arg1:string):Promise<tree.Tree>;
+export function SearchOneLayer(arg1:string):Promise<services.SearchResult>;
 
 export function TestConnection(arg1:services.LdapConn):Promise<string>;
