@@ -30,6 +30,10 @@ export function Search(arg1) {
   return window['go']['main']['App']['Search'](arg1);
 }
 
+export function SearchOneLayer(arg1) {
+  return window['go']['main']['App']['SearchOneLayer'](arg1);
+}
+
 export function TestConnection(arg1) {
   return window['go']['main']['App']['TestConnection'](arg1);
 }

@@ -7,7 +7,7 @@ require (
 	github.com/ginkgoch/godash/v2 v2.0.1
 	github.com/go-ldap/ldap/v3 v3.4.10
 	github.com/lithammer/shortuuid/v4 v4.2.0
-	github.com/wailsapp/wails/v2 v2.10.0
+	github.com/wailsapp/wails/v2 v2.10.1
 )
 
 require (

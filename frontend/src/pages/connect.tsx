@@ -25,15 +25,15 @@ import { navigate } from 'wouter/use-hash-location';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 const state = proxy({
-  name: '',
-  host: '',
-  username: '',
-  password: '',
-  base_dn: '',
-  port: '',
+  name: 'aes dev',
+  host: 'aes-dev.oneid.energy.gov',
+  username: 'cn=chimera,ou=applications,ou=accounts,ou=oneId,dc=doe,dc=gov',
+  password: 'chimerapass',
+  base_dn: 'ou=chimera,dc=doe,dc=gov',
+  port: '636',
   key: '', // empty for new connections
   is_favorited: true,
-  use_tls: false,
+  use_tls: true,
 });
 
 function ConnectPage() {
@@ -82,6 +82,7 @@ function ConnectPage() {
 
   function test_connection() {
     startTransition(async () => {
+        console.log(state)
       const result = await TestConnection(state);
       console.log('result', result);
       if (result === '') setIsConnectionValid(true);

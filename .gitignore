@@ -2,3 +2,4 @@ frontend/build
 build/bin
 */**/.DS_Store
 .DS_Store
+log
