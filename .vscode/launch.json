@@ -2,13 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Wails: Dev ldap-explorer",
+      "name": "Wails: Dev pantheon",
       "type": "go",
       "request": "launch",
       "mode": "exec",
-      "program": "${workspaceFolder}/build/bin/ldap-explorer-go.app/Contents/MacOS/ldap-explorer-go",
+      "program": "${workspaceFolder}/build/bin/Pantheon.app/Contents/MacOS/Pantheon",
       "preLaunchTask": "build debug",
       "cwd": "${workspaceFolder}"
-    }
+    },
   ]
 }

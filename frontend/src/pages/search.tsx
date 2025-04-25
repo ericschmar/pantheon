@@ -40,7 +40,6 @@ const SearchPage = () => {
   }, [code]);
 
   const onLayout = (sizes: number[]) => {
-    console.log(sizes);
     setPercentageHeight((sizes[1] - 17) / 100);
   };
 
@@ -80,7 +79,7 @@ const SearchPage = () => {
   return (
     <div className="w-full h-screen grid grid-cols-16 gap-1">
       <div className="col-span-5 h-screen">
-        <div className="mx-5 grow border-l grid-border-color h-screen pl-3 pt-3">
+        <div className="ml-5 grow border-l grid-border-color h-screen pt-3">
           <TreeView />
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { useEffect, useTransition } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import {
   Disconnect,
   GetEntries,
@@ -10,7 +10,6 @@ import { useValtio } from 'use-valtio';
 import { Loader, SquareMinus, SquarePlus, Unplug } from 'lucide-react';
 import { tabState, treeState } from '@/state/tab-state';
 import { navigate } from 'wouter/use-hash-location';
-import VirtualList from 'react-tiny-virtual-list';
 
 function TreeView() {
   const [loading, startTransition] = useTransition();
@@ -19,9 +18,6 @@ function TreeView() {
   useEffect(() => {
     startTransition(async () => {
       const t = await GetEntries();
-      //console.log(t);
-      //const temp = t.Root?.children;
-      //t.Root.children = [...temp, ...temp];
       treeState.entries = t;
     });
   }, []);
@@ -34,8 +30,13 @@ function TreeView() {
 
     const loadChildren = async () => {
       startLoadingChildrenTransition(async () => {
+        console.log('loading children');
         const children = await SearchOneLayer(`${childName}`);
-        treeState.appendChildren(childName, children.Root?.children || []);
+        console.log('children', children);
+        treeState.appendChildren(
+          childName,
+          children.Tree?.Root?.children || [],
+        );
       });
     };
 
@@ -48,7 +49,7 @@ function TreeView() {
     //console.log(entry, childName, qualifier, value);
     return (
       <>
-        <li className="w-full flex flex-1 leading-[18px]">
+        <div className="w-full flex leading-[18px]">
           <a
             onClick={() => {
               if (loadingChildren) return;
@@ -67,9 +68,7 @@ function TreeView() {
                   selected: true,
                 });
               } else {
-                startLoadingChildrenTransition(async () => {
-                  loadChildren();
-                });
+                loadChildren();
               }
             }}
             className={cn(
@@ -98,14 +97,20 @@ function TreeView() {
               ))
             )}
           </a>
-        </li>
+        </div>
         {root.children &&
           root.children.length > 0 &&
           openedNodeIds.includes(root.id) && (
-            <ul className="overflow-x-auto flex lg:flex-col text-sm pl-4">
+            <ul className="overflow-x-auto  overflow-y-auto flex lg:flex-col text-sm pl-4 h-[500px]">
               {children.map((childNode) => (
                 <ListComponent key={childNode.id} root={childNode} />
               ))}
+              <a
+                className="cursor-pointer text-xs pt-2"
+                onClick={() => loadChildren()}
+              >
+                Load more...
+              </a>
             </ul>
           )}
       </>
@@ -116,12 +121,7 @@ function TreeView() {
     <></>
   ) : (
     <nav
-      className={cn(
-        entries === null
-          ? ''
-          : 'border-l border-gray-300 dark:border-gray-700/20',
-        'hidden md:block relative z-1 overflow-y-auto h-full',
-      )}
+      className={cn('hidden md:block relative z-1 overflow-y-hidden h-full')}
     >
       {entries === null ? (
         <div className="flex flex-col items-center justify-center overflow-y-auto">
@@ -154,18 +154,9 @@ function TreeView() {
             />
           </div>
           <ul className="overflow-auto flex lg:flex-col text-sm">
-            <VirtualList
-              width="100%"
-              height={600}
-              itemCount={entries.Root?.children.length ?? 0}
-              itemSize={50} // Also supports variable heights (array or function getter)
-              renderItem={({ index, style }) => (
-                <ListComponent
-                  key={entries.Root?.children[index].id}
-                  root={entries.Root?.children[index]}
-                />
-              )}
-            />
+            {entries.Root?.children.map((entry) => (
+              <ListComponent key={entry.id} root={entry} />
+            ))}
           </ul>
         </>
       )}

@@ -25,12 +25,12 @@ import { navigate } from 'wouter/use-hash-location';
 import { useHotkeys } from 'react-hotkeys-hook';
 
 const state = proxy({
-  name: 'Testing',
-  host: 'ldap.forumsys.com',
-  username: 'cn=read-only-admin,dc=example,dc=com',
-  password: 'password',
-  base_dn: 'dc=example,dc=com',
-  port: '389',
+  name: '',
+  host: '',
+  username: '',
+  password: '',
+  base_dn: '',
+  port: '',
   key: '', // empty for new connections
   is_favorited: true,
   use_tls: true,
@@ -122,12 +122,13 @@ function ConnectPage() {
                   <Button
                     variant="light"
                     onClick={() => {
+                      state.key = cred.key;
+                      state.name = cred.name;
                       state.base_dn = cred.base_dn;
                       state.port = cred.port;
                       state.host = cred.host;
                       state.username = cred.username;
                       state.password = cred.password;
-                      connect();
                     }}
                   >
                     <Unplug size={13} />

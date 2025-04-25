@@ -30,10 +30,7 @@ func NewApp() *App {
 
 // startup is called at application startup
 func (a *App) startup(ctx context.Context) {
-	// Perform your setup here
 	a.ctx = ctx
-	//logger := slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{AddSource: true}))
-	//slog.SetDefault(logger)
 	if runtime.GOOS == "darwin" { // macos
 		if kr, err := keyring.Open(keyring.Config{
 			ServiceName:              "Pantheon",
@@ -70,11 +67,11 @@ func (a *App) shutdown(ctx context.Context) {
 	// Perform your teardown here
 }
 
-func (a *App) Search(search string) (*tree.Tree, error) {
+func (a *App) Search(search string) (*services.SearchResult, error) {
 	return a.ls.Search(search)
 }
 
-func (a *App) SearchOneLayer(search string) (*tree.Tree, error) {
+func (a *App) SearchOneLayer(search string) (*services.SearchResult, error) {
 	return a.ls.SearchOneLayer(search)
 }
 
@@ -102,12 +99,19 @@ func (a *App) GetCredentials() []*services.LdapConn {
 	items, _ := a.kr.Keys()
 	return gd.Map(items, func(key string) *services.LdapConn {
 		item, _ := a.kr.Get(key)
-		var i services.LdapConn
-		if err := json.Unmarshal(item.Data, &i); err != nil {
+		var conn services.LdapConn
+		if err := json.Unmarshal(item.Data, &conn); err != nil {
 			return nil
 		}
-		ld, _ := services.NewLdapConn(services.WithHost(i.Host), services.WithPort(i.Port), services.WithName(i.Name))
-		ld.Key = key
+		ld, _ := services.NewLdapConn(
+			services.WithHost(conn.Host),
+			services.WithUsername(conn.Username),
+			services.WithPassword(conn.Password),
+			services.WithPort(conn.Port),
+			services.WithName(conn.Name),
+			services.WithBaseDN(conn.BaseDN),
+			services.WithUseTls(conn.UseTls),
+			services.WithKey(key))
 		return ld
 	})
 }
@@ -128,32 +132,26 @@ func (a *App) TestConnection(conn *services.LdapConn) string {
 }
 
 func (a *App) Connect(conn *services.LdapConn) string {
-    slog.Info("connecting to ldap server", "conn", conn)
 	jsonBytes, err := json.Marshal(conn)
 	if err != nil {
 		return err.Error()
 	}
-	if c, err := a.kr.Get(conn.Key); err != nil {
-		if conn.IsFavorited {
-			a.kr.Set(keyring.Item{
-				Key:   shortuuid.New(),
-				Data:  jsonBytes,
-				Label: conn.Host,
-			})
+	if conn.IsFavorited {
+		if conn.Key == "" {
+			conn.Key = shortuuid.New()
 		}
-		return a.connect(conn)
-	} else {
-		var i services.LdapConn
-		if err := json.Unmarshal(c.Data, &i); err != nil {
-			return err.Error()
-		}
-		return a.connect(&i)
+		a.kr.Set(keyring.Item{
+			Key:   conn.Key,
+			Data:  jsonBytes,
+			Label: conn.Host,
+		})
 	}
+	return a.connect(conn)
 }
 
 func (a *App) connect(conn *services.LdapConn) string {
-    slog.Info("connecting to ldap server", "conn", conn)
-	if ls, err := services.NewLdapConn(services.WithHost(conn.Host),
+	if ls, err := services.NewLdapConn(
+		services.WithHost(conn.Host),
 		services.WithUsername(conn.Username),
 		services.WithPassword(conn.Password),
 		services.WithPort(conn.Port),
@@ -165,7 +163,7 @@ func (a *App) connect(conn *services.LdapConn) string {
 	} else {
 		a.ls = ls
 		if err := a.ls.Connect(); err != nil {
-		slog.Error("error", "err", err)
+			slog.Error("error", "err", err)
 			return err.Error()
 		}
 		a.isConnected = true
