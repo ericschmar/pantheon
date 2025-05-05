@@ -98,21 +98,24 @@ function TreeView() {
             )}
           </a>
         </div>
-        {root.children &&
-          root.children.length > 0 &&
-          openedNodeIds.includes(root.id) && (
-            <ul className="overflow-x-auto  overflow-y-auto flex lg:flex-col text-sm pl-4 h-[500px]">
-              {children.map((childNode) => (
-                <ListComponent key={childNode.id} root={childNode} />
-              ))}
-              <a
-                className="cursor-pointer text-xs pt-2"
-                onClick={() => loadChildren()}
-              >
-                Load more...
-              </a>
-            </ul>
-          )}
+        {children && children.length > 0 && openedNodeIds.includes(root.id) && (
+          <ul
+            className={
+              'overflow-x-auto  overflow-y-auto flex lg:flex-col text-sm pl-4 ' +
+              `min-h-[${children.length * 15}px]`
+            }
+          >
+            {children.map((childNode) => (
+              <ListComponent key={childNode.id} root={childNode} />
+            ))}
+            <a
+              className="cursor-pointer text-xs pt-2"
+              onClick={() => loadChildren()}
+            >
+              Load more...
+            </a>
+          </ul>
+        )}
       </>
     );
   };
@@ -120,9 +123,7 @@ function TreeView() {
   return loading ? (
     <></>
   ) : (
-    <nav
-      className={cn('hidden md:block relative z-1 overflow-y-hidden h-full')}
-    >
+    <nav className={cn('hidden md:block relative z-1 h-full')}>
       {entries === null ? (
         <div className="flex flex-col items-center justify-center overflow-y-auto">
           <div className="text-sm text-gray-500 dark:text-gray-300">

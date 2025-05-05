@@ -79,7 +79,7 @@ const SearchPage = () => {
   return (
     <div className="w-full h-screen grid grid-cols-16 gap-1">
       <div className="col-span-5 h-screen">
-        <div className="ml-5 grow border-l grid-border-color h-screen pt-3">
+        <div className="ml-5 grow border-l grid-border-color h-screen pt-3 overflow-y-auto">
           <TreeView />
         </div>
       </div>
