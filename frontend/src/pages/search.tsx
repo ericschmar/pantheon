@@ -12,7 +12,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 
 const SearchPage = () => {
-  const [code, setCode] = useState('((objectClass=*))');
+  const [code, setCode] = useState('(objectClass=*)');
   const [error, setError] = useState<string | null>(null);
   const [percentageHeight, setPercentageHeight] = useState(0.35);
   const [loading, startTransition] = useTransition();

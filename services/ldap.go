@@ -82,7 +82,6 @@ func (l *LdapConn) Connect() error {
 func (l *LdapConn) backgroundConnectionPoll() {
 	slog.Info("starting background connection poll")
 	for {
-		time.Sleep(200 * time.Millisecond)
 		select {
 		case <-l.closeChan:
 			slog.Info("returning from backgroundConnectionPoll")
@@ -103,7 +102,10 @@ func (l *LdapConn) backgroundConnectionPoll() {
 
 func (l *LdapConn) Disconnect() error {
 	l.closeChan <- true
-	return l.conn.Close()
+	if l.conn != nil {
+		return l.conn.Close()
+	}
+	return nil
 }
 
 func WithHost(host string) Option {

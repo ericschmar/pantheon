@@ -1,4 +1,4 @@
-import _ from "lodash";
+import _ from 'lodash';
 
 const Attribute = ({
   name,
@@ -8,7 +8,7 @@ const Attribute = ({
   value: string | string[];
 }) => {
   return (
-    <div className="col-span-8 py-1 bg-offgray-50/40">
+    <div className="col-span-8 py-1 bg-offgray-50/40 w-full">
       <div className="flex flex-row items-center px-1 place-content-between">
         <p className="overflow-ellipsis overflow-hidden pr-1 text-xs min-w-[144px]">
           {name}
@@ -21,7 +21,7 @@ const Attribute = ({
                 wrap="soft"
                 className="px-1 rounded-xs box-border font-semibold min-h-[20px] text-xs w-full min-w-[144px] bg-offgray-100/60 text-pretty break-words"
                 value={_.map(value as string[], (item) => item.trim()).join(
-                  "\n"
+                  '\n',
                 )}
                 onChange={() => {}}
               />

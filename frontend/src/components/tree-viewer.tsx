@@ -1,4 +1,4 @@
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useTransition } from 'react';
 import {
   Disconnect,
   GetEntries,
@@ -23,16 +23,16 @@ function TreeView() {
   }, []);
 
   const ListComponent = ({ root }: { root: tree.TreeNode | undefined }) => {
-    const { addSelectedNodeId, removeSelectedNodeId, openedNodeIds } =
+    const { addSelectedNodeId, removeSelectedNodeId, openedNodeIds, hasMore } =
       useValtio(treeState);
     const { contains, addTab } = useValtio(tabState);
     const [loadingChildren, startLoadingChildrenTransition] = useTransition();
 
     const loadChildren = async () => {
       startLoadingChildrenTransition(async () => {
-        console.log('loading children');
         const children = await SearchOneLayer(`${childName}`);
         console.log('children', children);
+        treeState.hasMore = children.HasMore;
         treeState.appendChildren(
           childName,
           children.Tree?.Root?.children || [],
@@ -108,12 +108,14 @@ function TreeView() {
             {children.map((childNode) => (
               <ListComponent key={childNode.id} root={childNode} />
             ))}
-            <a
-              className="cursor-pointer text-xs pt-2"
-              onClick={() => loadChildren()}
-            >
-              Load more...
-            </a>
+            {hasMore && (
+              <a
+                className="cursor-pointer text-xs pt-2"
+                onClick={() => loadChildren()}
+              >
+                Load more...
+              </a>
+            )}
           </ul>
         )}
       </>

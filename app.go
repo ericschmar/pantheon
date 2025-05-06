@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"ldap-explorer-go/enums"
 	"ldap-explorer-go/services"
 	"ldap-explorer-go/tree"
@@ -72,7 +73,9 @@ func (a *App) Search(search string) (*services.SearchResult, error) {
 }
 
 func (a *App) SearchOneLayer(search string) (*services.SearchResult, error) {
-	return a.ls.SearchOneLayer(search)
+    t, e := a.ls.SearchOneLayer(search)
+    fmt.Println("has more", t.HasMore)
+	return t, e
 }
 
 func (a *App) GetEntries() *tree.Tree {

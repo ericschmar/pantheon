@@ -30,6 +30,7 @@ export const tabState = proxy({
 export const treeState = proxy({
   entries: null as unknown as tree.Tree,
   openedNodeIds: [] as string[],
+  hasMore: false,
   addSelectedNodeId: (id: string) => {
     treeState.openedNodeIds = [...treeState.openedNodeIds, id];
   },
