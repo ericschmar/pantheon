@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"ldap-explorer-go/enums"
 	"ldap-explorer-go/services"
 	"ldap-explorer-go/tree"
@@ -57,15 +56,15 @@ func (a App) domReady(ctx context.Context) {
 // either by clicking the window close button or calling runtime.Quit.
 // Returning true will cause the application to continue, false will continue shutdown as normal.
 func (a *App) beforeClose(ctx context.Context) (prevent bool) {
+   	if err := a.ls.Disconnect(); err != nil {
+		slog.Error("Failed to disconnect from LDAP server", "err", err)
+	}
 	return false
 }
 
 // shutdown is called at application termination
 func (a *App) shutdown(ctx context.Context) {
-	if err := a.ls.Disconnect(); err != nil {
-		slog.Error("Failed to disconnect from LDAP server", "err", err)
-	}
-	// Perform your teardown here
+    return
 }
 
 func (a *App) Search(search string) (*services.SearchResult, error) {
@@ -74,8 +73,11 @@ func (a *App) Search(search string) (*services.SearchResult, error) {
 
 func (a *App) SearchOneLayer(search string) (*services.SearchResult, error) {
     t, e := a.ls.SearchOneLayer(search)
-    fmt.Println("has more", t.HasMore)
-	return t, e
+    if e != nil {
+        a.Connect(a.ls)
+        t, e = a.ls.SearchOneLayer(search)
+    }
+	return t, nil
 }
 
 func (a *App) GetEntries() *tree.Tree {

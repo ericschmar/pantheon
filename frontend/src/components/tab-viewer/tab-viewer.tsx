@@ -24,7 +24,7 @@ const TabViewer = () => {
       <div
         onClick={onClick}
         className={cn(
-          'flex flex-row gap-1 flex-nowrap items-center min-w-[4] max-w-[8] cursor-pointer pl-2 pr-2 pt-1 pb-1 rounded-sm bg-white/60 border default-border-color',
+          'flex flex-row gap-1 flex-nowrap items-center min-w-4 max-w-8 cursor-pointer pl-2 pr-2 pt-1 pb-1 rounded-sm bg-white/60 border default-border-color',
           selected
             ? 'dark:bg-offgray-800/8 shadow-[3px_3px_0_hsla(219,_93%,_42%,_0.06)] dark:shadow-[3px_3px_0_hsla(219,_90%,_60%,_0.08)]'
             : '',
