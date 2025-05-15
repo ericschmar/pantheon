@@ -101,6 +101,7 @@ func (l *LdapConn) backgroundConnectionPoll() {
 }
 
 func (l *LdapConn) Disconnect() error {
+    if l == nil { return nil }
 	l.closeChan <- true
 	if l.conn != nil {
 		return l.conn.Close()
